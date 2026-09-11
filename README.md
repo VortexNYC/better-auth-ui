@@ -57,6 +57,8 @@ const authClient = createAuthClient({
 | `DisableTwoFactorForm`                                                            | Ready  |
 | `GenerateBackupCodesForm`                                                         | Ready  |
 | `ChangePasswordForm`                                                              | Ready  |
+| `SetPasswordForm`                                                                 | Ready  |
+| `DeleteAccountForm`                                                               | Ready  |
 | `ConnectedAccounts`                                                               | Ready  |
 | `VerificationEmail`                                                               | Ready  |
 | `PasswordResetEmail`                                                              | Ready  |

@@ -100,4 +100,12 @@ export {
   ConnectedAccounts,
   type ConnectedAccountsProps,
 } from "./forms/connected-accounts";
+export {
+  DeleteAccountForm,
+  type DeleteAccountFormProps,
+} from "./forms/delete-account-form";
+export {
+  SetPasswordForm,
+  type SetPasswordFormProps,
+} from "./forms/set-password-form";
 export * from "./emails";
