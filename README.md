@@ -1,11 +1,11 @@
 # @vortexnyc/better-auth-ui
 
-Kumo-based React components for [Better Auth](https://www.better-auth.com).
+Kumo-based React components and React Email templates for [Better Auth](https://www.better-auth.com).
 
 ## Install
 
 ```bash
-pnpm add @vortexnyc/better-auth-ui @cloudflare/kumo @phosphor-icons/react better-auth react react-dom zod
+pnpm add @vortexnyc/better-auth-ui @cloudflare/kumo @phosphor-icons/react better-auth react react-dom react-email zod
 ```
 
 ## Usage
@@ -56,6 +56,26 @@ const authClient = createAuthClient({
 | `GenerateBackupCodesForm`                                                         | Ready  |
 | `ChangePasswordForm`                                                              | Ready  |
 | `ConnectedAccounts`                                                               | Ready  |
+| `VerificationEmail`                                                               | Ready  |
+| `PasswordResetEmail`                                                              | Ready  |
+| `OrganizationInvitationEmail`                                                     | Ready  |
+| `ChangeEmailConfirmation`                                                         | Ready  |
+
+## Email templates
+
+Render email HTML on the server with `react-email` and pass it to your Better Auth email transport (Cloudflare Email, etc.):
+
+```tsx
+import { render, VerificationEmail } from "@vortexnyc/better-auth-ui";
+
+const html = render(
+  <VerificationEmail
+    brandName="Seal"
+    username="Ada"
+    verificationUrl={`${origin}/verify-email?token=${token}`}
+  />,
+);
+```
 
 ## Development
 

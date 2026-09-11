@@ -12,6 +12,7 @@ export default defineConfig({
     "better-auth",
     "@cloudflare/kumo",
     "@phosphor-icons/react",
+    "react-email",
     "zod",
   ],
 });
