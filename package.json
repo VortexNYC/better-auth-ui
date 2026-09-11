@@ -2,10 +2,11 @@
   "name": "@vortexnyc/better-auth-ui",
   "version": "0.1.0",
   "description": "Kumo-based React components for Better Auth",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
