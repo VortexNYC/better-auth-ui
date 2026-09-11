@@ -25,25 +25,28 @@ const authClient = createAuthClient({
 
 ## Components
 
-| Component                                   | Status  |
-| ------------------------------------------- | ------- |
-| `AuthProvider` / `useAuth`                  | Ready   |
-| `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready   |
-| `SignInForm`                                | Ready   |
-| `SignUpForm`                                | Ready   |
-| `ForgotPasswordForm`                        | Ready   |
-| `ResetPasswordForm`                         | Ready   |
-| `VerifyEmailForm`                           | Ready   |
-| `EnableTwoFactorForm` / `VerifyTotpForm`    | Ready   |
-| `SessionList`                               | Ready   |
-| `CreateOrganizationForm`                    | Ready   |
-| `OrganizationList`                          | Ready   |
-| `OrganizationSwitcher`                      | Ready   |
-| `OrganizationProfile`                       | Ready   |
-| `OrganizationMembers` / `InviteMemberForm`  | Ready   |
-| `AcceptInviteScreen`                        | Ready   |
-| `UserProfileForm`                           | Planned |
-| `ChangeEmailForm`                           | Planned |
+| Component                                   | Status |
+| ------------------------------------------- | ------ |
+| `AuthProvider` / `useAuth`                  | Ready  |
+| `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready  |
+| `SignInForm`                                | Ready  |
+| `SignUpForm`                                | Ready  |
+| `ForgotPasswordForm`                        | Ready  |
+| `ResetPasswordForm`                         | Ready  |
+| `VerifyEmailForm`                           | Ready  |
+| `EnableTwoFactorForm` / `VerifyTotpForm`    | Ready  |
+| `SessionList`                               | Ready  |
+| `CreateOrganizationForm`                    | Ready  |
+| `OrganizationList`                          | Ready  |
+| `OrganizationSwitcher`                      | Ready  |
+| `OrganizationProfile`                       | Ready  |
+| `OrganizationMembers` / `InviteMemberForm`  | Ready  |
+| `AcceptInviteScreen`                        | Ready  |
+| `UserProfileForm`                           | Ready  |
+| `ChangeEmailForm`                           | Ready  |
+| `VerifyBackupCodeForm`                      | Ready  |
+| `DisableTwoFactorForm`                      | Ready  |
+| `GenerateBackupCodesForm`                   | Ready  |
 
 ## Development
 

@@ -80,7 +80,15 @@ export interface AnyAuthClient {
   }) => Promise<AuthResult>;
 
   /** Profile and session management. */
-  updateUser?: (args: { name?: string; image?: string }) => Promise<AuthResult>;
+  updateUser?: (args: {
+    name?: string;
+    image?: string | null;
+  }) => Promise<AuthResult>;
+  changePassword?: (args: {
+    currentPassword: string;
+    newPassword: string;
+    revokeOtherSessions?: boolean;
+  }) => Promise<AuthResult>;
   listSessions?: () => Promise<{
     data?: unknown[] | null;
     error: AuthResult["error"];

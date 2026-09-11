@@ -57,3 +57,23 @@ export {
   AcceptInviteScreen,
   type AcceptInviteScreenProps,
 } from "./forms/accept-invite-screen";
+export {
+  UserProfileForm,
+  type UserProfileFormProps,
+} from "./forms/user-profile-form";
+export {
+  ChangeEmailForm,
+  type ChangeEmailFormProps,
+} from "./forms/change-email-form";
+export {
+  VerifyBackupCodeForm,
+  type VerifyBackupCodeFormProps,
+} from "./forms/verify-backup-code-form";
+export {
+  DisableTwoFactorForm,
+  type DisableTwoFactorFormProps,
+} from "./forms/disable-two-factor-form";
+export {
+  GenerateBackupCodesForm,
+  type GenerateBackupCodesFormProps,
+} from "./forms/generate-backup-codes-form";
