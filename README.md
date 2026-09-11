@@ -50,4 +50,4 @@ pnpm run lint
 
 ## License
 
-Apache-2.0 © Vortex
+MIT © Vortex
