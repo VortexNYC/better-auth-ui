@@ -123,7 +123,7 @@ export interface AnyAuthClient {
   }) => Promise<AuthResult>;
   unlinkAccount?: (args: {
     providerId: string;
-    accountId?: string;
+    accountId: string;
   }) => Promise<AuthResult>;
 
   /** Two-factor authentication (TOTP + backup codes). */
@@ -210,13 +210,17 @@ export interface AnyAuthClient {
       role: string | string[];
       organizationId?: string;
     }): Promise<AuthResult>;
+    getActiveMemberRole(): Promise<{
+      data?: { role: string } | null;
+      error: AuthResult["error"];
+    }>;
   };
 }
 
 export interface AuthAccount {
   id: string;
   providerId: string;
-  accountId?: string;
+  accountId: string;
   userId: string;
   scopes?: string[];
   createdAt?: string | Date;
