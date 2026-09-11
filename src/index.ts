@@ -30,6 +30,10 @@ export {
   type MagicLinkSignInFormProps,
 } from "./forms/magic-link-sign-in-form";
 export {
+  MagicLinkVerify,
+  type MagicLinkVerifyProps,
+} from "./forms/magic-link-verify";
+export {
   ForgotPasswordForm,
   type ForgotPasswordFormProps,
 } from "./forms/forgot-password-form";

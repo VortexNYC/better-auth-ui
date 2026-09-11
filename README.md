@@ -41,6 +41,7 @@ const authClient = createAuthClient({
 | `SignInForm` (email + social + magic link)                                        | Ready  |
 | `SignUpForm` (email + social providers)                                           | Ready  |
 | `MagicLinkSignInForm`                                                             | Ready  |
+| `MagicLinkVerify`                                                                 | Ready  |
 | `ForgotPasswordForm`                                                              | Ready  |
 | `ResetPasswordForm`                                                               | Ready  |
 | `VerifyEmailForm`                                                                 | Ready  |

@@ -62,6 +62,11 @@ export interface AnyAuthClient {
     }): Promise<AuthResult>;
   };
 
+  /** Magic link sign-in and verification. */
+  magicLink?: {
+    verify(args: { token: string; callbackURL?: string }): Promise<AuthResult>;
+  };
+
   /** Password recovery. */
   forgetPassword?: (args: {
     email: string;
