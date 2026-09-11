@@ -6,42 +6,42 @@ import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
 
-const resendSchema = z.object({
+const sendEmailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
 });
 
-type ResendValues = z.infer<typeof resendSchema>;
+type SendEmailValues = z.infer<typeof sendEmailSchema>;
 
 type VerifyStatus = "idle" | "verifying" | "verified" | "error";
 
 export interface VerifyEmailFormProps extends AuthFormBaseProps {
   token?: string;
   userEmail?: string | null;
-  resendCallbackUrl?: string;
+  callbackUrl?: string;
   title?: string;
   description?: string;
   verifiedMessage?: string;
-  resendLabel?: string;
-  resendingLabel?: string;
+  sendLabel?: string;
+  sendingLabel?: string;
 }
 
 /**
  * Email verification screen built on Kumo UI.
  *
  * If `token` is provided, the form attempts to verify it automatically on
- * mount. If no token is provided, it offers a resend-verification-email flow.
+ * mount. If no token is provided, it offers a send-verification-email flow.
  */
 export function VerifyEmailForm({
   token,
   userEmail,
-  resendCallbackUrl,
+  callbackUrl,
   title = "Verify your email",
   description = "Confirm your email address to continue.",
   className,
   errorClassName,
   verifiedMessage = "Your email has been verified.",
-  resendLabel = "Resend verification email",
-  resendingLabel = "Sending...",
+  sendLabel = "Send verification email",
+  sendingLabel = "Sending...",
   onSuccess,
 }: VerifyEmailFormProps) {
   const client = useAuth();
@@ -52,10 +52,10 @@ export function VerifyEmailForm({
   const [error, setError] = useState<string | null>(null);
 
   const [email, setEmail] = useState(userEmail ?? "");
-  const [isResending, setIsResending] = useState(false);
-  const [resendError, setResendError] = useState<string | null>(null);
-  const [resendSuccess, setResendSuccess] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Partial<ResendValues>>({});
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sendSuccess, setSendSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Partial<SendEmailValues>>({});
 
   useEffect(() => {
     if (!token) {
@@ -99,13 +99,13 @@ export function VerifyEmailForm({
     };
   }, [token, client, onSuccess]);
 
-  async function handleResend(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setResendError(null);
-    setResendSuccess(false);
+    setSendError(null);
+    setSendSuccess(false);
     setFieldErrors({});
 
-    const validation = resendSchema.safeParse({ email });
+    const validation = sendEmailSchema.safeParse({ email });
     if (!validation.success) {
       const flattened = validation.error.flatten().fieldErrors;
       setFieldErrors({ email: flattened.email?.[0] });
@@ -113,28 +113,30 @@ export function VerifyEmailForm({
     }
 
     if (client.sendVerificationEmail === undefined) {
-      setResendError("Resend is not available.");
+      setSendError("Sending verification email is not available.");
       return;
     }
 
-    setIsResending(true);
+    setIsSending(true);
 
     try {
       const response = await client.sendVerificationEmail({
         email: validation.data.email,
-        callbackURL: resendCallbackUrl,
+        callbackURL: callbackUrl,
       });
 
       if (response.error !== null) {
-        setResendError(response.error.message ?? "Resend failed.");
+        setSendError(response.error.message ?? "Could not send email.");
         return;
       }
 
-      setResendSuccess(true);
+      setSendSuccess(true);
     } catch (err) {
-      setResendError(err instanceof Error ? err.message : "Resend failed.");
+      setSendError(
+        err instanceof Error ? err.message : "Could not send email.",
+      );
     } finally {
-      setIsResending(false);
+      setIsSending(false);
     }
   }
 
@@ -156,10 +158,10 @@ export function VerifyEmailForm({
         ) : null}
 
         {status === "error" || !token ? (
-          <form onSubmit={handleResend} className="space-y-4">
-            <AuthError message={resendError} className={errorClassName} />
+          <form onSubmit={handleSend} className="space-y-4">
+            <AuthError message={sendError} className={errorClassName} />
 
-            {resendSuccess ? (
+            {sendSuccess ? (
               <p className="text-center text-sm text-kumo-subtle">
                 Check your inbox for a new verification link.
               </p>
@@ -175,8 +177,8 @@ export function VerifyEmailForm({
                   required
                 />
 
-                <AuthSubmitButton loading={isResending} className="w-full">
-                  {isResending ? resendingLabel : resendLabel}
+                <AuthSubmitButton loading={isSending} className="w-full">
+                  {isSending ? sendingLabel : sendLabel}
                 </AuthSubmitButton>
               </>
             )}

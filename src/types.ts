@@ -43,7 +43,7 @@ export interface AnyAuthClient {
       password: string;
       callbackURL?: string;
     }): Promise<AuthResult>;
-    social(args: {
+    social?(args: {
       provider: string;
       callbackURL?: string;
     }): Promise<AuthResult>;
@@ -89,12 +89,33 @@ export interface AnyAuthClient {
     newPassword: string;
     revokeOtherSessions?: boolean;
   }) => Promise<AuthResult>;
+  deleteUser?: (args: {
+    password?: string;
+    callbackURL?: string;
+    token?: string;
+  }) => Promise<AuthResult>;
+  setPassword?: (args: { newPassword: string }) => Promise<AuthResult>;
   listSessions?: () => Promise<{
     data?: unknown[] | null;
     error: AuthResult["error"];
   }>;
   revokeSession?: (args: { token: string }) => Promise<AuthResult>;
   revokeOtherSessions?: () => Promise<AuthResult>;
+
+  /** Social account linking. */
+  listAccounts?: () => Promise<{
+    data?: AuthAccount[] | null;
+    error: AuthResult["error"];
+  }>;
+  linkSocial?: (args: {
+    provider: string;
+    callbackURL?: string;
+    errorCallbackURL?: string;
+  }) => Promise<AuthResult>;
+  unlinkAccount?: (args: {
+    providerId: string;
+    accountId?: string;
+  }) => Promise<AuthResult>;
 
   /** Two-factor authentication (TOTP + backup codes). */
   twoFactor?: {
@@ -199,6 +220,16 @@ export interface AnyAuthClient {
       error: AuthResult["error"];
     }>;
   };
+}
+
+export interface AuthAccount {
+  id: string;
+  providerId: string;
+  accountId?: string;
+  userId: string;
+  scopes?: string[];
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface AuthOrganization {

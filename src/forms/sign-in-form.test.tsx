@@ -99,4 +99,49 @@ describe("SignInForm", () => {
 
     expect(await screen.findByText("Invalid credentials")).toBeDefined();
   });
+
+  it("calls signIn.social when a provider button is clicked", async () => {
+    const signInSocial = vi.fn().mockResolvedValue({ error: null });
+
+    const client = {
+      signIn: { email: vi.fn(), social: signInSocial },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(
+      <SignInForm
+        redirectTo="/dashboard"
+        providers={[{ provider: "google", label: "Continue with Google" }]}
+      />,
+      client,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Continue with Google" }),
+    );
+
+    await expect.poll(() => signInSocial.mock.calls.length).toBe(1);
+    expect(signInSocial).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  });
+
+  it("shows unavailable message when signIn.social is missing and a provider is clicked", async () => {
+    const client = { signIn: { email: vi.fn() } } as unknown as AnyAuthClient;
+
+    renderWithAuth(
+      <SignInForm
+        providers={[{ provider: "google", label: "Continue with Google" }]}
+      />,
+      client,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Continue with Google" }),
+    );
+
+    expect(
+      await screen.findByText("Social sign-in is not available."),
+    ).toBeDefined();
+  });
 });

@@ -3,7 +3,14 @@ import { Input } from "@cloudflare/kumo/components/input";
 import { Link } from "@cloudflare/kumo/components/link";
 import { z } from "zod";
 
-import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
+import {
+  AuthCard,
+  AuthDivider,
+  AuthError,
+  AuthProviderButtons,
+  AuthSubmitButton,
+  type AuthProviderOption,
+} from "../auth-primitives";
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
 
@@ -22,6 +29,9 @@ export interface SignInFormProps extends AuthFormBaseProps {
   signUpUrl?: string;
   submitLabel?: string;
   submittingLabel?: string;
+  providers?: readonly AuthProviderOption[];
+  onProviderSelect?: (providerId: string) => void | Promise<void>;
+  dividerLabel?: string;
 }
 
 /**
@@ -40,6 +50,9 @@ export function SignInForm({
   errorClassName,
   submitLabel = "Sign in",
   submittingLabel = "Signing in...",
+  providers,
+  onProviderSelect,
+  dividerLabel = "or",
   onSuccess,
 }: SignInFormProps) {
   const client = useAuth();
@@ -49,6 +62,37 @@ export function SignInForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<SignInValues>>({});
+
+  async function handleProviderSelect(providerId: string) {
+    if (onProviderSelect) {
+      await onProviderSelect(providerId);
+      return;
+    }
+
+    setError(null);
+
+    if (client.signIn.social === undefined) {
+      setError("Social sign-in is not available.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await client.signIn.social({
+        provider: providerId,
+        callbackURL: redirectTo,
+      });
+
+      if (response.error !== null) {
+        setError(response.error.message ?? "Social sign-in failed.");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Social sign-in failed.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -108,6 +152,19 @@ export function SignInForm({
     <AuthCard className={className} title={title} description={description}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthError message={error} className={errorClassName} />
+
+        {providers !== undefined && providers.length > 0 ? (
+          <>
+            <AuthProviderButtons
+              providers={providers}
+              onSelect={handleProviderSelect}
+              isSubmitting={isSubmitting}
+              className="space-y-2"
+              providerButtonClassName="w-full"
+            />
+            <AuthDivider label={dividerLabel} />
+          </>
+        ) : null}
 
         <Input
           label="Email"

@@ -104,4 +104,31 @@ describe("SignUpForm", () => {
     });
     expect(onSuccess).toHaveBeenCalled();
   });
+
+  it("calls signIn.social when a provider button is clicked", async () => {
+    const signInSocial = vi.fn().mockResolvedValue({ error: null });
+
+    const client = {
+      signIn: { social: signInSocial },
+      signUp: { email: vi.fn() },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(
+      <SignUpForm
+        redirectTo="/dashboard"
+        providers={[{ provider: "github", label: "Continue with GitHub" }]}
+      />,
+      client,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Continue with GitHub" }),
+    );
+
+    await expect.poll(() => signInSocial.mock.calls.length).toBe(1);
+    expect(signInSocial).toHaveBeenCalledWith({
+      provider: "github",
+      callbackURL: "/dashboard",
+    });
+  });
 });

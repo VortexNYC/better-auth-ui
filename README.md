@@ -19,34 +19,43 @@ const authClient = createAuthClient({
 });
 
 <AuthProvider client={authClient}>
-  <SignInForm redirectTo="/dashboard" forgotPasswordHref="/forgot-password" />
+  <SignInForm
+    redirectTo="/dashboard"
+    forgotPasswordHref="/forgot-password"
+    providers={[
+      { provider: "google", label: "Continue with Google" },
+      { provider: "github", label: "Continue with GitHub" },
+    ]}
+  />
 </AuthProvider>;
 ```
 
 ## Components
 
-| Component                                   | Status |
-| ------------------------------------------- | ------ |
-| `AuthProvider` / `useAuth`                  | Ready  |
-| `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready  |
-| `SignInForm`                                | Ready  |
-| `SignUpForm`                                | Ready  |
-| `ForgotPasswordForm`                        | Ready  |
-| `ResetPasswordForm`                         | Ready  |
-| `VerifyEmailForm`                           | Ready  |
-| `EnableTwoFactorForm` / `VerifyTotpForm`    | Ready  |
-| `SessionList`                               | Ready  |
-| `CreateOrganizationForm`                    | Ready  |
-| `OrganizationList`                          | Ready  |
-| `OrganizationSwitcher`                      | Ready  |
-| `OrganizationProfile`                       | Ready  |
-| `OrganizationMembers` / `InviteMemberForm`  | Ready  |
-| `AcceptInviteScreen`                        | Ready  |
-| `UserProfileForm`                           | Ready  |
-| `ChangeEmailForm`                           | Ready  |
-| `VerifyBackupCodeForm`                      | Ready  |
-| `DisableTwoFactorForm`                      | Ready  |
-| `GenerateBackupCodesForm`                   | Ready  |
+| Component                                                                         | Status |
+| --------------------------------------------------------------------------------- | ------ |
+| `AuthProvider` / `useAuth`                                                        | Ready  |
+| `AuthCard`, `AuthError`, `AuthSubmitButton`, `AuthProviderButtons`, `AuthDivider` | Ready  |
+| `SignInForm` (email + social providers)                                           | Ready  |
+| `SignUpForm` (email + social providers)                                           | Ready  |
+| `ForgotPasswordForm`                                                              | Ready  |
+| `ResetPasswordForm`                                                               | Ready  |
+| `VerifyEmailForm`                                                                 | Ready  |
+| `EnableTwoFactorForm` / `VerifyTotpForm`                                          | Ready  |
+| `SessionList`                                                                     | Ready  |
+| `CreateOrganizationForm`                                                          | Ready  |
+| `OrganizationList`                                                                | Ready  |
+| `OrganizationSwitcher`                                                            | Ready  |
+| `OrganizationProfile`                                                             | Ready  |
+| `OrganizationMembers` / `InviteMemberForm`                                        | Ready  |
+| `AcceptInviteScreen`                                                              | Ready  |
+| `UserProfileForm`                                                                 | Ready  |
+| `ChangeEmailForm`                                                                 | Ready  |
+| `VerifyBackupCodeForm`                                                            | Ready  |
+| `DisableTwoFactorForm`                                                            | Ready  |
+| `GenerateBackupCodesForm`                                                         | Ready  |
+| `ChangePasswordForm`                                                              | Ready  |
+| `ConnectedAccounts`                                                               | Ready  |
 
 ## Development
 

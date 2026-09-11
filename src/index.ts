@@ -2,10 +2,15 @@ export type { AnyAuthClient, AuthFormBaseProps, AuthUser } from "./types";
 export { AuthProvider, useAuth, type AuthProviderProps } from "./auth-provider";
 export {
   AuthCard,
+  AuthDivider,
   AuthError,
+  AuthProviderButtons,
   AuthSubmitButton,
   type AuthCardProps,
+  type AuthDividerProps,
   type AuthErrorProps,
+  type AuthProviderButtonsProps,
+  type AuthProviderOption,
   type AuthSubmitButtonProps,
 } from "./auth-primitives";
 export { SignInForm, type SignInFormProps } from "./forms/sign-in-form";
@@ -77,3 +82,11 @@ export {
   GenerateBackupCodesForm,
   type GenerateBackupCodesFormProps,
 } from "./forms/generate-backup-codes-form";
+export {
+  ChangePasswordForm,
+  type ChangePasswordFormProps,
+} from "./forms/change-password-form";
+export {
+  ConnectedAccounts,
+  type ConnectedAccountsProps,
+} from "./forms/connected-accounts";

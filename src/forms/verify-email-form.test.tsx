@@ -64,11 +64,11 @@ describe("VerifyEmailForm", () => {
     expect(await screen.findByText("Invalid or expired token")).toBeDefined();
   });
 
-  it("resends verification email when no token is provided", async () => {
+  it("sends verification email when no token is provided", async () => {
     const sendVerificationEmail = vi.fn().mockResolvedValue({ error: null });
 
     renderWithAuth(
-      <VerifyEmailForm userEmail="user@example.com" />,
+      <VerifyEmailForm userEmail="user@example.com" callbackUrl="/verify" />,
       createMockClient(vi.fn(), sendVerificationEmail),
     );
 
@@ -81,7 +81,7 @@ describe("VerifyEmailForm", () => {
     await expect.poll(() => sendVerificationEmail.mock.calls.length).toBe(1);
     expect(sendVerificationEmail).toHaveBeenCalledWith({
       email: "user@example.com",
-      callbackURL: undefined,
+      callbackURL: "/verify",
     });
     expect(
       await screen.findByText("Check your inbox for a new verification link."),
