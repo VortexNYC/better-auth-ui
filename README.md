@@ -64,6 +64,8 @@ const authClient = createAuthClient({
 | `PasswordResetEmail`                                                              | Ready  |
 | `OrganizationInvitationEmail`                                                     | Ready  |
 | `ChangeEmailConfirmation`                                                         | Ready  |
+| `WelcomeEmail`                                                                    | Ready  |
+| `PasswordChangedEmail`                                                            | Ready  |
 
 ## Email templates
 

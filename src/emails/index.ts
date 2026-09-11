@@ -16,3 +16,8 @@ export {
   ChangeEmailConfirmation,
   type ChangeEmailConfirmationProps,
 } from "./change-email-confirmation";
+export { WelcomeEmail, type WelcomeEmailProps } from "./welcome-email";
+export {
+  PasswordChangedEmail,
+  type PasswordChangedEmailProps,
+} from "./password-changed-email";

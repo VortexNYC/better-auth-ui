@@ -5,8 +5,10 @@ import { render } from "react-email";
 
 import { ChangeEmailConfirmation } from "./change-email-confirmation";
 import { OrganizationInvitationEmail } from "./organization-invitation-email";
+import { PasswordChangedEmail } from "./password-changed-email";
 import { PasswordResetEmail } from "./password-reset-email";
 import { VerificationEmail } from "./verification-email";
+import { WelcomeEmail } from "./welcome-email";
 
 describe("Email templates", () => {
   it("VerificationEmail renders the verification URL", async () => {
@@ -58,5 +60,26 @@ describe("Email templates", () => {
 
     expect(html).toContain("new@example.com");
     expect(html).toContain("https://example.com/change-email?token=def");
+  });
+
+  it("WelcomeEmail renders the get started URL", async () => {
+    const html = await render(
+      <WelcomeEmail
+        username="Ada"
+        getStartedUrl="https://example.com/dashboard"
+        brandName="Seal"
+      />,
+    );
+
+    expect(html).toContain("Welcome aboard");
+    expect(html).toContain("https://example.com/dashboard");
+  });
+
+  it("PasswordChangedEmail renders a security notice", async () => {
+    const html = await render(
+      <PasswordChangedEmail username="Ada" brandName="Seal" />,
+    );
+
+    expect(html).toContain("Password changed");
   });
 });
