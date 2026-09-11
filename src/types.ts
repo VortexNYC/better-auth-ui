@@ -123,7 +123,7 @@ export interface AnyAuthClient {
   }) => Promise<AuthResult>;
   unlinkAccount?: (args: {
     providerId: string;
-    accountId?: string;
+    accountId: string;
   }) => Promise<AuthResult>;
 
   /** Two-factor authentication (TOTP + backup codes). */
@@ -188,42 +188,28 @@ export interface AnyAuthClient {
       data?: { status: boolean } | null;
       error: AuthResult["error"];
     }>;
-    listInvitations(args?: {
-      query?: { organizationId?: string };
-    }): Promise<{ data?: AuthInvitation[] | null; error: AuthResult["error"] }>;
     listUserInvitations(): Promise<{
       data?: AuthInvitation[] | null;
       error: AuthResult["error"];
     }>;
     inviteMember(args: {
       email: string;
-      role: string;
+      role: string | string[];
       organizationId?: string;
+      resend?: boolean;
     }): Promise<{ data?: AuthInvitation | null; error: AuthResult["error"] }>;
     acceptInvitation(args: { invitationId: string }): Promise<AuthResult>;
     rejectInvitation(args: { invitationId: string }): Promise<AuthResult>;
     cancelInvitation(args: { invitationId: string }): Promise<AuthResult>;
-    getInvitation(args: { query?: { id?: string } }): Promise<{
-      data?: AuthInvitation | null;
-      error: AuthResult["error"];
-    }>;
-    listMembers(args?: {
-      query?: { organizationId?: string; limit?: number };
-    }): Promise<{ data?: AuthMember[] | null; error: AuthResult["error"] }>;
     removeMember(args: {
-      memberId: string;
+      memberIdOrEmail: string;
       organizationId?: string;
     }): Promise<AuthResult>;
     updateMemberRole(args: {
       memberId: string;
-      role: string;
+      role: string | string[];
       organizationId?: string;
     }): Promise<AuthResult>;
-    leave(args?: { organizationId?: string }): Promise<AuthResult>;
-    getActiveMember(): Promise<{
-      data?: AuthMember | null;
-      error: AuthResult["error"];
-    }>;
     getActiveMemberRole(): Promise<{
       data?: { role: string } | null;
       error: AuthResult["error"];
@@ -234,7 +220,7 @@ export interface AnyAuthClient {
 export interface AuthAccount {
   id: string;
   providerId: string;
-  accountId?: string;
+  accountId: string;
   userId: string;
   scopes?: string[];
   createdAt?: string | Date;

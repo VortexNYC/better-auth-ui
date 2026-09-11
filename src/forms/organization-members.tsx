@@ -228,7 +228,7 @@ export function OrganizationMembers({
 
     try {
       const response = await client.organization.removeMember({
-        memberId: member.id,
+        memberIdOrEmail: member.user?.email ?? member.id,
       });
 
       if (response.error !== null) {

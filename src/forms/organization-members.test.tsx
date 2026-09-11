@@ -78,6 +78,8 @@ describe("OrganizationMembers", () => {
     fireEvent.click(screen.getByRole("button", { name: "Remove" }));
 
     await expect.poll(() => removeMember.mock.calls.length).toBe(1);
-    expect(removeMember).toHaveBeenCalledWith({ memberId: "mem_1" });
+    expect(removeMember).toHaveBeenCalledWith({
+      memberIdOrEmail: "ada@example.com",
+    });
   });
 });

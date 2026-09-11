@@ -20,6 +20,8 @@ export interface OrganizationProfileProps {
   deleteLabel?: string;
   deletingLabel?: string;
   deletedMessage?: string;
+  /** Target a specific organization instead of the active session organization. */
+  organizationId?: string;
   onUpdated?: (organization: AuthOrganizationFull) => void;
   onDeleted?: () => void;
 }
@@ -42,6 +44,7 @@ export function OrganizationProfile({
   deleteLabel = "Delete workspace",
   deletingLabel = "Deleting…",
   deletedMessage = "Workspace deleted.",
+  organizationId: targetOrganizationId,
   onUpdated,
   onDeleted,
 }: OrganizationProfileProps) {
@@ -66,7 +69,11 @@ export function OrganizationProfile({
     setError(null);
 
     try {
-      const response = await client.organization.getFullOrganization();
+      const response = await client.organization.getFullOrganization({
+        query: targetOrganizationId
+          ? { organizationId: targetOrganizationId }
+          : undefined,
+      });
       if (response.error !== null) {
         setError(response.error.message ?? "Could not load workspace.");
         return;
@@ -105,6 +112,7 @@ export function OrganizationProfile({
           logo: organization.logo,
           metadata: organization.metadata,
         },
+        organizationId: targetOrganizationId,
       });
 
       if (response.error !== null) {
@@ -134,7 +142,7 @@ export function OrganizationProfile({
 
     try {
       const response = await client.organization["delete"]({
-        organizationId: organization.id,
+        organizationId: targetOrganizationId ?? organization.id,
       });
 
       if (response.error !== null) {
