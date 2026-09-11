@@ -34,8 +34,8 @@ const authClient = createAuthClient({
 | `ForgotPasswordForm`                          | Ready   |
 | `ResetPasswordForm`                           | Ready   |
 | `VerifyEmailForm`                             | Ready   |
-| `TwoFactorForm`                               | Planned |
-| `SessionList`                                 | Planned |
+| `EnableTwoFactorForm` / `VerifyTotpForm`      | Ready   |
+| `SessionList`                                 | Ready   |
 | `UserProfileForm`                             | Planned |
 | `ChangeEmailForm`                             | Planned |
 | `OrganizationList` / `CreateOrganizationForm` | Planned |

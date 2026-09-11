@@ -164,6 +164,17 @@ export interface AuthInvitation {
   expiresAt?: Date;
 }
 
+export interface AuthSession {
+  id: string;
+  token: string;
+  userId?: string;
+  userAgent?: string | null;
+  ipAddress?: string | null;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  expiresAt?: string | Date;
+}
+
 /**
  * Shared form props for all auth forms.
  */

@@ -22,3 +22,12 @@ export {
   VerifyEmailForm,
   type VerifyEmailFormProps,
 } from "./forms/verify-email-form";
+export {
+  EnableTwoFactorForm,
+  type EnableTwoFactorFormProps,
+} from "./forms/enable-two-factor-form";
+export {
+  VerifyTotpForm,
+  type VerifyTotpFormProps,
+} from "./forms/verify-totp-form";
+export { SessionList, type SessionListProps } from "./forms/session-list";
