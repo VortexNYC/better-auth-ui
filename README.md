@@ -25,22 +25,25 @@ const authClient = createAuthClient({
 
 ## Components
 
-| Component                                     | Status  |
-| --------------------------------------------- | ------- |
-| `AuthProvider` / `useAuth`                    | Ready   |
-| `AuthCard`, `AuthError`, `AuthSubmitButton`   | Ready   |
-| `SignInForm`                                  | Ready   |
-| `SignUpForm`                                  | Ready   |
-| `ForgotPasswordForm`                          | Ready   |
-| `ResetPasswordForm`                           | Ready   |
-| `VerifyEmailForm`                             | Ready   |
-| `EnableTwoFactorForm` / `VerifyTotpForm`      | Ready   |
-| `SessionList`                                 | Ready   |
-| `UserProfileForm`                             | Planned |
-| `ChangeEmailForm`                             | Planned |
-| `OrganizationList` / `CreateOrganizationForm` | Planned |
-| `OrganizationSwitcher`                        | Planned |
-| `InviteMemberForm` / `AcceptInviteScreen`     | Planned |
+| Component                                   | Status  |
+| ------------------------------------------- | ------- |
+| `AuthProvider` / `useAuth`                  | Ready   |
+| `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready   |
+| `SignInForm`                                | Ready   |
+| `SignUpForm`                                | Ready   |
+| `ForgotPasswordForm`                        | Ready   |
+| `ResetPasswordForm`                         | Ready   |
+| `VerifyEmailForm`                           | Ready   |
+| `EnableTwoFactorForm` / `VerifyTotpForm`    | Ready   |
+| `SessionList`                               | Ready   |
+| `CreateOrganizationForm`                    | Ready   |
+| `OrganizationList`                          | Ready   |
+| `OrganizationSwitcher`                      | Ready   |
+| `OrganizationProfile`                       | Ready   |
+| `OrganizationMembers` / `InviteMemberForm`  | Ready   |
+| `AcceptInviteScreen`                        | Ready   |
+| `UserProfileForm`                           | Planned |
+| `ChangeEmailForm`                           | Planned |
 
 ## Development
 

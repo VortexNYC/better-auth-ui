@@ -120,31 +120,76 @@ export interface AnyAuthClient {
       slug: string;
       logo?: string;
       metadata?: Record<string, unknown>;
+      keepCurrentActiveOrganization?: boolean;
+    }): Promise<{ data?: AuthOrganization | null; error: AuthResult["error"] }>;
+    delete(args: { organizationId: string }): Promise<AuthResult>;
+    update(args: {
+      data: {
+        name?: string;
+        slug?: string;
+        logo?: string | null;
+        metadata?: Record<string, unknown>;
+      };
+      organizationId?: string;
     }): Promise<{ data?: AuthOrganization | null; error: AuthResult["error"] }>;
     setActive(args: {
-      organizationId?: string;
+      organizationId?: string | null;
       organizationSlug?: string;
     }): Promise<AuthResult>;
+    getFullOrganization(args?: {
+      query?: {
+        organizationId?: string;
+        organizationSlug?: string;
+        membersLimit?: number;
+      };
+    }): Promise<{
+      data?: AuthOrganizationFull | null;
+      error: AuthResult["error"];
+    }>;
+    checkSlug(args: { slug: string }): Promise<{
+      data?: { status: boolean } | null;
+      error: AuthResult["error"];
+    }>;
+    listInvitations(args?: {
+      query?: { organizationId?: string };
+    }): Promise<{ data?: AuthInvitation[] | null; error: AuthResult["error"] }>;
+    listUserInvitations(): Promise<{
+      data?: AuthInvitation[] | null;
+      error: AuthResult["error"];
+    }>;
+    inviteMember(args: {
+      email: string;
+      role: string;
+      organizationId?: string;
+    }): Promise<{ data?: AuthInvitation | null; error: AuthResult["error"] }>;
     acceptInvitation(args: { invitationId: string }): Promise<AuthResult>;
     rejectInvitation(args: { invitationId: string }): Promise<AuthResult>;
     cancelInvitation(args: { invitationId: string }): Promise<AuthResult>;
-    invitations(args?: {
-      query?: { organizationId?: string };
-    }): Promise<{ data?: AuthInvitation[] | null; error: AuthResult["error"] }>;
-    createInvitation(args: {
-      email: string;
-      role?: string;
+    getInvitation(args: { query?: { id?: string } }): Promise<{
+      data?: AuthInvitation | null;
+      error: AuthResult["error"];
+    }>;
+    listMembers(args?: {
+      query?: { organizationId?: string; limit?: number };
+    }): Promise<{ data?: AuthMember[] | null; error: AuthResult["error"] }>;
+    removeMember(args: {
+      memberId: string;
       organizationId?: string;
-    }): Promise<{ data?: AuthInvitation | null; error: AuthResult["error"] }>;
+    }): Promise<AuthResult>;
     updateMemberRole(args: {
       memberId: string;
       role: string;
       organizationId?: string;
     }): Promise<AuthResult>;
-    removeMember(args: {
-      memberId: string;
-      organizationId?: string;
-    }): Promise<AuthResult>;
+    leave(args?: { organizationId?: string }): Promise<AuthResult>;
+    getActiveMember(): Promise<{
+      data?: AuthMember | null;
+      error: AuthResult["error"];
+    }>;
+    getActiveMemberRole(): Promise<{
+      data?: { role: string } | null;
+      error: AuthResult["error"];
+    }>;
   };
 }
 
@@ -154,14 +199,38 @@ export interface AuthOrganization {
   slug: string;
   logo?: string | null;
   metadata?: Record<string, unknown>;
+  createdAt?: string | Date;
+}
+
+export interface AuthOrganizationFull extends AuthOrganization {
+  members: AuthMember[];
+  invitations: AuthInvitation[];
+}
+
+export interface AuthMember {
+  id: string;
+  organizationId: string;
+  userId: string;
+  role: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+    image?: string | null;
+  } | null;
 }
 
 export interface AuthInvitation {
   id: string;
+  organizationId?: string;
   email: string;
   role?: string;
   status?: "pending" | "accepted" | "rejected" | "canceled";
-  expiresAt?: Date;
+  inviterId?: string;
+  expiresAt?: string | Date;
+  createdAt?: string | Date;
 }
 
 export interface AuthSession {
