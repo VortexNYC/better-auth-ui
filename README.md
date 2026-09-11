@@ -38,8 +38,9 @@ const authClient = createAuthClient({
 | `Authenticated` / `Unauthenticated` / `AuthLoading`                               | Ready  |
 | `AuthCard`, `AuthError`, `AuthSubmitButton`, `AuthProviderButtons`, `AuthDivider` | Ready  |
 | `SignOutButton` / `UserButton`                                                    | Ready  |
-| `SignInForm` (email + social providers)                                           | Ready  |
+| `SignInForm` (email + social + magic link)                                        | Ready  |
 | `SignUpForm` (email + social providers)                                           | Ready  |
+| `MagicLinkSignInForm`                                                             | Ready  |
 | `ForgotPasswordForm`                                                              | Ready  |
 | `ResetPasswordForm`                                                               | Ready  |
 | `VerifyEmailForm`                                                                 | Ready  |

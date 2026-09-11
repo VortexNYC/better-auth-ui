@@ -47,6 +47,10 @@ export interface AnyAuthClient {
       provider: string;
       callbackURL?: string;
     }): Promise<AuthResult>;
+    magicLink?(args: {
+      email: string;
+      callbackURL?: string;
+    }): Promise<AuthResult>;
   };
 
   signUp: {

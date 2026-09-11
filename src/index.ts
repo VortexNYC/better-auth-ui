@@ -26,6 +26,10 @@ export {
 export { SignInForm, type SignInFormProps } from "./forms/sign-in-form";
 export { SignUpForm, type SignUpFormProps } from "./forms/sign-up-form";
 export {
+  MagicLinkSignInForm,
+  type MagicLinkSignInFormProps,
+} from "./forms/magic-link-sign-in-form";
+export {
   ForgotPasswordForm,
   type ForgotPasswordFormProps,
 } from "./forms/forgot-password-form";
