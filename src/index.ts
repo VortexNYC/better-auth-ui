@@ -1,6 +1,16 @@
 export type { AnyAuthClient, AuthFormBaseProps, AuthUser } from "./types";
 export { AuthProvider, useAuth, type AuthProviderProps } from "./auth-provider";
 export {
+  Authenticated,
+  Unauthenticated,
+  AuthLoading,
+  type AuthenticatedProps,
+  type UnauthenticatedProps,
+  type AuthLoadingProps,
+} from "./auth-boundaries";
+export { SignOutButton, type SignOutButtonProps } from "./sign-out-button";
+export { UserButton, type UserButtonProps } from "./user-button";
+export {
   AuthCard,
   AuthDivider,
   AuthError,

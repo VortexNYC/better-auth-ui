@@ -35,7 +35,9 @@ const authClient = createAuthClient({
 | Component                                                                         | Status |
 | --------------------------------------------------------------------------------- | ------ |
 | `AuthProvider` / `useAuth`                                                        | Ready  |
+| `Authenticated` / `Unauthenticated` / `AuthLoading`                               | Ready  |
 | `AuthCard`, `AuthError`, `AuthSubmitButton`, `AuthProviderButtons`, `AuthDivider` | Ready  |
+| `SignOutButton` / `UserButton`                                                    | Ready  |
 | `SignInForm` (email + social providers)                                           | Ready  |
 | `SignUpForm` (email + social providers)                                           | Ready  |
 | `ForgotPasswordForm`                                                              | Ready  |
