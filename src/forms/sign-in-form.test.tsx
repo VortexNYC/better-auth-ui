@@ -6,6 +6,14 @@ import { SignInForm } from "./sign-in-form";
 
 afterEach(() => cleanup());
 
+function getForm(): HTMLFormElement {
+  const form = document.querySelector("form");
+  if (form === null) {
+    throw new Error("Form not found");
+  }
+  return form as HTMLFormElement;
+}
+
 function createMockClient(
   signInEmail: AnyAuthClient["signIn"]["email"] = vi.fn(),
 ) {
@@ -33,7 +41,7 @@ describe("SignInForm", () => {
   it("shows validation errors for empty fields", async () => {
     renderWithAuth(<SignInForm />);
 
-    fireEvent.submit(screen.getByRole("button", { name: "Sign in" }));
+    fireEvent.submit(getForm());
 
     expect(await screen.findByText("Password is required")).toBeDefined();
     expect(
@@ -61,7 +69,7 @@ describe("SignInForm", () => {
       target: { value: "password123" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    fireEvent.submit(getForm());
 
     await expect.poll(() => signInEmail.mock.calls.length).toBe(1);
     expect(signInEmail).toHaveBeenCalledWith({
@@ -87,7 +95,7 @@ describe("SignInForm", () => {
       target: { value: "wrong" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    fireEvent.submit(getForm());
 
     expect(await screen.findByText("Invalid credentials")).toBeDefined();
   });

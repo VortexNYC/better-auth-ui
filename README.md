@@ -30,8 +30,8 @@ const authClient = createAuthClient({
 | `AuthProvider` / `useAuth`                  | Ready   |
 | `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready   |
 | `SignInForm`                                | Ready   |
-| `SignUpForm`                                | Planned |
-| `ForgotPasswordForm`                        | Planned |
+| `SignUpForm`                                | Ready   |
+| `ForgotPasswordForm`                        | Ready   |
 | `ResetPasswordForm`                         | Planned |
 | `VerifyEmailForm`                           | Planned |
 | `TwoFactorForm`                             | Planned |
