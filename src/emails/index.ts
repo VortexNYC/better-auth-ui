@@ -21,3 +21,4 @@ export {
   PasswordChangedEmail,
   type PasswordChangedEmailProps,
 } from "./password-changed-email";
+export { MagicLinkEmail, type MagicLinkEmailProps } from "./magic-link-email";

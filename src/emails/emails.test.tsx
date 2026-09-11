@@ -5,6 +5,7 @@ import { render } from "react-email";
 
 import { ChangeEmailConfirmation } from "./change-email-confirmation";
 import { OrganizationInvitationEmail } from "./organization-invitation-email";
+import { MagicLinkEmail } from "./magic-link-email";
 import { PasswordChangedEmail } from "./password-changed-email";
 import { PasswordResetEmail } from "./password-reset-email";
 import { VerificationEmail } from "./verification-email";
@@ -81,5 +82,18 @@ describe("Email templates", () => {
     );
 
     expect(html).toContain("Password changed");
+  });
+
+  it("MagicLinkEmail renders the sign-in URL", async () => {
+    const html = await render(
+      <MagicLinkEmail
+        username="Ada"
+        signInUrl="https://example.com/magic?token=abc"
+        brandName="Seal"
+      />,
+    );
+
+    expect(html).toContain("Sign in to your account");
+    expect(html).toContain("https://example.com/magic?token=abc");
   });
 });
