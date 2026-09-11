@@ -14,3 +14,11 @@ export {
   ForgotPasswordForm,
   type ForgotPasswordFormProps,
 } from "./forms/forgot-password-form";
+export {
+  ResetPasswordForm,
+  type ResetPasswordFormProps,
+} from "./forms/reset-password-form";
+export {
+  VerifyEmailForm,
+  type VerifyEmailFormProps,
+} from "./forms/verify-email-form";

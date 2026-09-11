@@ -25,18 +25,22 @@ const authClient = createAuthClient({
 
 ## Components
 
-| Component                                   | Status  |
-| ------------------------------------------- | ------- |
-| `AuthProvider` / `useAuth`                  | Ready   |
-| `AuthCard`, `AuthError`, `AuthSubmitButton` | Ready   |
-| `SignInForm`                                | Ready   |
-| `SignUpForm`                                | Ready   |
-| `ForgotPasswordForm`                        | Ready   |
-| `ResetPasswordForm`                         | Planned |
-| `VerifyEmailForm`                           | Planned |
-| `TwoFactorForm`                             | Planned |
-| `SessionList`                               | Planned |
-| `UserProfileForm`                           | Planned |
+| Component                                     | Status  |
+| --------------------------------------------- | ------- |
+| `AuthProvider` / `useAuth`                    | Ready   |
+| `AuthCard`, `AuthError`, `AuthSubmitButton`   | Ready   |
+| `SignInForm`                                  | Ready   |
+| `SignUpForm`                                  | Ready   |
+| `ForgotPasswordForm`                          | Ready   |
+| `ResetPasswordForm`                           | Ready   |
+| `VerifyEmailForm`                             | Ready   |
+| `TwoFactorForm`                               | Planned |
+| `SessionList`                                 | Planned |
+| `UserProfileForm`                             | Planned |
+| `ChangeEmailForm`                             | Planned |
+| `OrganizationList` / `CreateOrganizationForm` | Planned |
+| `OrganizationSwitcher`                        | Planned |
+| `InviteMemberForm` / `AcceptInviteScreen`     | Planned |
 
 ## Development
 

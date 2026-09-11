@@ -80,9 +80,11 @@ export function SignInForm({
       }
 
       if (
-        response.data &&
+        typeof response.data === "object" &&
+        response.data !== null &&
         "twoFactorRedirect" in response.data &&
-        response.data.twoFactorRedirect === true
+        (response.data as { twoFactorRedirect?: unknown }).twoFactorRedirect ===
+          true
       ) {
         // Two-factor is handled by a separate form surface. Surface a message
         // so callers know to redirect or render the TOTP step.
