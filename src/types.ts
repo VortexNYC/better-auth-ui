@@ -68,7 +68,7 @@ export interface AnyAuthClient {
   };
 
   /** Password recovery. */
-  forgetPassword?: (args: {
+  requestPasswordReset?: (args: {
     email: string;
     redirectTo?: string;
   }) => Promise<AuthResult>;

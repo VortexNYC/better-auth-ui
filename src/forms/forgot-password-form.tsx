@@ -63,14 +63,14 @@ export function ForgotPasswordForm({
 
     setIsSubmitting(true);
 
-    if (client.forgetPassword === undefined) {
+    if (client.requestPasswordReset === undefined) {
       setError("Password recovery is not available.");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const response = await client.forgetPassword({
+      const response = await client.requestPasswordReset({
         email: validation.data.email,
         redirectTo: resetPasswordUrl,
       });

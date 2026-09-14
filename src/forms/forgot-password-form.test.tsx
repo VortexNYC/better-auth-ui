@@ -15,10 +15,10 @@ function getForm(): HTMLFormElement {
 }
 
 function createMockClient(
-  forgetPassword: AnyAuthClient["forgetPassword"] = vi.fn(),
+  requestPasswordReset: AnyAuthClient["requestPasswordReset"] = vi.fn(),
 ) {
   return {
-    forgetPassword,
+    requestPasswordReset,
   } as unknown as AnyAuthClient;
 }
 
@@ -52,8 +52,8 @@ describe("ForgotPasswordForm", () => {
     ).toBeDefined();
   });
 
-  it("calls forgetPassword and shows success message", async () => {
-    const forgetPassword = vi.fn().mockResolvedValue({ error: null });
+  it("calls requestPasswordReset and shows success message", async () => {
+    const requestPasswordReset = vi.fn().mockResolvedValue({ error: null });
     const onSuccess = vi.fn();
 
     renderWithAuth(
@@ -61,7 +61,7 @@ describe("ForgotPasswordForm", () => {
         resetPasswordUrl="https://app.example.com/reset-password"
         onSuccess={onSuccess}
       />,
-      createMockClient(forgetPassword),
+      createMockClient(requestPasswordReset),
     );
 
     fireEvent.change(screen.getByLabelText("Email"), {
@@ -70,8 +70,8 @@ describe("ForgotPasswordForm", () => {
 
     fireEvent.submit(getForm());
 
-    await expect.poll(() => forgetPassword.mock.calls.length).toBe(1);
-    expect(forgetPassword).toHaveBeenCalledWith({
+    await expect.poll(() => requestPasswordReset.mock.calls.length).toBe(1);
+    expect(requestPasswordReset).toHaveBeenCalledWith({
       email: "ada@example.com",
       redirectTo: "https://app.example.com/reset-password",
     });

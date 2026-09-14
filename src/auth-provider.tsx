@@ -10,7 +10,7 @@ export interface AuthProviderProps {
 }
 
 /**
- * Provides the typed Better Auth client to all `@vortexnyc/better-auth-ui`
+ * Provides the typed Better Auth client to all `@vortex-api/better-auth-ui`
  * components through React context.
  */
 export function AuthProvider({ client, children }: AuthProviderProps) {
