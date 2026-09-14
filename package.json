@@ -1,9 +1,11 @@
 {
-  "name": "@vortexnyc/better-auth-ui",
+  "name": "@vortex-api/better-auth-ui",
   "version": "0.1.1",
   "description": "Kumo-based React components for Better Auth",
   "license": "MIT",
+  "author": "Shlomo Kabareti <shlomo@vortex.nyc>",
   "type": "module",
+  "sideEffects": false,
   "files": [
     "dist",
     "LICENSE"
@@ -30,6 +32,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VortexNYC/better-auth-ui.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "better-auth",
