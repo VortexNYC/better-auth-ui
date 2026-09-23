@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@cloudflare/kumo/components/button";
 import { Input } from "@cloudflare/kumo/components/input";
 import { Link } from "@cloudflare/kumo/components/link";
 import { z } from "zod";
@@ -54,6 +55,14 @@ export interface SignUpFormProps extends AuthFormBaseProps {
   providers?: readonly AuthProviderOption[];
   onProviderSelect?: (providerId: string) => void | Promise<void>;
   dividerLabel?: string;
+  /**
+   * Shown when the server requires email verification (sign-up returns no
+   * session). Renders a "check your email" card with a resend button backed
+   * by `sendVerificationEmail`.
+   */
+  verifyEmailTitle?: string;
+  verifyEmailDescription?: string;
+  resendVerificationLabel?: string;
 }
 
 /**
@@ -72,6 +81,9 @@ export function SignUpForm({
   providers,
   onProviderSelect,
   dividerLabel = "or",
+  verifyEmailTitle = "Check your email",
+  verifyEmailDescription = "We sent a verification link to your inbox. Click it to activate your account.",
+  resendVerificationLabel = "Resend verification email",
   onSuccess,
 }: SignUpFormProps) {
   const client = useAuth();
@@ -83,6 +95,39 @@ export function SignUpForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<SignUpValues>>({});
+  const [awaitingVerification, setAwaitingVerification] = useState(false);
+  const [verificationResent, setVerificationResent] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+
+  async function handleResendVerification() {
+    if (client.sendVerificationEmail === undefined) {
+      setError("Resending verification email is not available.");
+      return;
+    }
+    setError(null);
+    setIsResending(true);
+    try {
+      const response = await client.sendVerificationEmail({
+        email,
+        callbackURL: redirectTo,
+      });
+      if (response.error !== null) {
+        setError(
+          response.error.message ?? "Could not resend the verification email.",
+        );
+        return;
+      }
+      setVerificationResent(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not resend the verification email.",
+      );
+    } finally {
+      setIsResending(false);
+    }
+  }
 
   async function handleProviderSelect(providerId: string) {
     if (onProviderSelect) {
@@ -154,6 +199,19 @@ export function SignUpForm({
 
       onSuccess?.();
 
+      // When the server requires email verification (or disables auto
+      // sign-in) the sign-up response carries no session token — show the
+      // check-your-email state instead of bouncing to a dead redirect.
+      const data = response.data;
+      const token =
+        typeof data === "object" && data !== null && "token" in data
+          ? data.token
+          : null;
+      if (typeof token !== "string") {
+        setAwaitingVerification(true);
+        return;
+      }
+
       if (typeof window !== "undefined" && redirectTo) {
         window.location.assign(redirectTo);
       }
@@ -162,6 +220,47 @@ export function SignUpForm({
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (awaitingVerification) {
+    return (
+      <AuthCard
+        className={className}
+        title={verifyEmailTitle}
+        description={verifyEmailDescription}
+      >
+        <div className="space-y-4">
+          <AuthError message={error} className={errorClassName} />
+          <p className="text-sm text-kumo-subtle">
+            Sent to{" "}
+            <span className="font-medium text-kumo-default">{email}</span>
+          </p>
+          {verificationResent ? (
+            <p className="text-center text-sm text-kumo-subtle">
+              Verification email resent.
+            </p>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              loading={isResending}
+              onClick={handleResendVerification}
+            >
+              {resendVerificationLabel}
+            </Button>
+          )}
+          {signInUrl ? (
+            <p className="text-center text-sm text-kumo-subtle">
+              Already verified?{" "}
+              <Link href={signInUrl} variant="inline">
+                Sign in
+              </Link>
+            </p>
+          ) : null}
+        </div>
+      </AuthCard>
+    );
   }
 
   return (
