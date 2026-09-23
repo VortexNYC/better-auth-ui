@@ -39,6 +39,7 @@ export {
 } from "./forms/forgot-password-form";
 export {
   ResetPasswordForm,
+  readResetPasswordSearch,
   type ResetPasswordFormProps,
 } from "./forms/reset-password-form";
 export {

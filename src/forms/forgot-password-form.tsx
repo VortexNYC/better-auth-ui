@@ -16,6 +16,10 @@ type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export interface ForgotPasswordFormProps extends AuthFormBaseProps {
   title?: string;
   description?: string;
+  /**
+   * Better Auth `redirectTo` for the emailed reset link. Defaults to
+   * `${window.location.origin}/reset-password` in the browser.
+   */
   resetPasswordUrl?: string;
   signInUrl?: string;
   submitLabel?: string;
@@ -72,7 +76,11 @@ export function ForgotPasswordForm({
     try {
       const response = await client.requestPasswordReset({
         email: validation.data.email,
-        redirectTo: resetPasswordUrl,
+        redirectTo:
+          resetPasswordUrl ??
+          (typeof window === "undefined"
+            ? undefined
+            : `${window.location.origin}/reset-password`),
       });
 
       if (response.error !== null) {

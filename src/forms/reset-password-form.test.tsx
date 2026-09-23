@@ -2,7 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { AuthProvider } from "../auth-provider";
 import type { AnyAuthClient } from "../types";
-import { ResetPasswordForm } from "./reset-password-form";
+import {
+  ResetPasswordForm,
+  readResetPasswordSearch,
+} from "./reset-password-form";
 
 afterEach(() => cleanup());
 
@@ -82,5 +85,112 @@ describe("ResetPasswordForm", () => {
     expect(
       await screen.findByText("Password updated. You can now sign in."),
     ).toBeDefined();
+  });
+
+  it("enforces a custom minPasswordLength", async () => {
+    const resetPassword = vi.fn().mockResolvedValue({ error: null });
+
+    renderWithAuth(
+      <ResetPasswordForm token="abc123" minPasswordLength={12} />,
+      createMockClient(resetPassword),
+    );
+
+    fireEvent.change(screen.getByLabelText("New password"), {
+      target: { value: "short" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm password"), {
+      target: { value: "short" },
+    });
+
+    fireEvent.submit(getForm());
+
+    expect(
+      await screen.findByText("Password must be at least 12 characters"),
+    ).toBeDefined();
+    expect(resetPassword).not.toHaveBeenCalled();
+  });
+
+  it("parses the token from the URL when no token prop is given", async () => {
+    window.history.pushState({}, "", "/reset-password?token=url-token-9");
+    const resetPassword = vi.fn().mockResolvedValue({ error: null });
+
+    renderWithAuth(
+      <ResetPasswordForm />,
+      createMockClient(resetPassword),
+    );
+
+    fireEvent.change(screen.getByLabelText("New password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    await expect.poll(() => resetPassword.mock.calls.length).toBe(1);
+    expect(resetPassword).toHaveBeenCalledWith({
+      newPassword: "password123",
+      token: "url-token-9",
+    });
+  });
+
+  it("shows the invalid-link state for ?error=INVALID_TOKEN", () => {
+    window.history.pushState({}, "", "/reset-password?error=INVALID_TOKEN");
+
+    renderWithAuth(
+      <ResetPasswordForm forgotPasswordHref="/forgot-password" />,
+    );
+
+    expect(
+      screen.getByText("This reset link is invalid or has expired."),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Request a new reset link" }),
+    ).toBeDefined();
+    expect(screen.queryByLabelText("New password")).toBeNull();
+  });
+
+  it("links back to sign in after a successful reset", async () => {
+    const resetPassword = vi.fn().mockResolvedValue({ error: null });
+
+    renderWithAuth(
+      <ResetPasswordForm token="abc123" signInUrl="/sign-in" />,
+      createMockClient(resetPassword),
+    );
+
+    fireEvent.change(screen.getByLabelText("New password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    expect(
+      await screen.findByRole("link", { name: "Sign in" }),
+    ).toBeDefined();
+  });
+});
+
+describe("readResetPasswordSearch", () => {
+  it("returns the token for a valid link", () => {
+    expect(readResetPasswordSearch("?token=abc")).toEqual({
+      token: "abc",
+      invalid: false,
+    });
+  });
+
+  it("flags an error redirect as invalid", () => {
+    expect(readResetPasswordSearch("?error=INVALID_TOKEN")).toEqual({
+      token: null,
+      invalid: true,
+    });
+  });
+
+  it("treats a missing token as invalid", () => {
+    expect(readResetPasswordSearch("")).toEqual({
+      token: null,
+      invalid: false,
+    });
   });
 });

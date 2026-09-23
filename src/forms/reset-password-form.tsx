@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Input } from "@cloudflare/kumo/components/input";
+import { Link } from "@cloudflare/kumo/components/link";
 import { z } from "zod";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
@@ -28,7 +29,12 @@ type ResetPasswordValues = {
 };
 
 export interface ResetPasswordFormProps extends AuthFormBaseProps {
-  token: string;
+  /**
+   * Better Auth reset token. When omitted, the form parses
+   * `window.location.search` itself — Better Auth lands users on the
+   * `redirectTo` URL with either `?token=` (valid) or `?error=INVALID_TOKEN`.
+   */
+  token?: string;
   title?: string;
   description?: string;
   /**
@@ -36,9 +42,30 @@ export interface ResetPasswordFormProps extends AuthFormBaseProps {
    * `emailAndPassword.minPasswordLength` configured on the server.
    */
   minPasswordLength?: number;
+  /** Link target for the invalid/expired-link state (e.g. "/forgot-password"). */
+  forgotPasswordHref?: string;
+  /** Link target shown after a successful reset (e.g. "/sign-in"). */
+  signInUrl?: string;
   submitLabel?: string;
   submittingLabel?: string;
   successMessage?: string;
+  invalidTokenMessage?: string;
+}
+
+/**
+ * Parses the Better Auth reset redirect: `?token=` marks a valid link,
+ * `?error=` (e.g. INVALID_TOKEN) or a missing token marks an invalid one.
+ */
+export function readResetPasswordSearch(search: string): {
+  token: string | null;
+  invalid: boolean;
+} {
+  const params = new URLSearchParams(search);
+  if (params.get("error") !== null) {
+    return { token: null, invalid: true };
+  }
+  const token = params.get("token");
+  return { token: token === null || token.length === 0 ? null : token, invalid: false };
 }
 
 /**
@@ -49,14 +76,25 @@ export function ResetPasswordForm({
   title = "Reset password",
   description = "Choose a new password for your account.",
   minPasswordLength = 8,
+  forgotPasswordHref,
+  signInUrl,
   className,
   errorClassName,
   submitLabel = "Reset password",
   submittingLabel = "Resetting...",
   successMessage = "Password updated. You can now sign in.",
+  invalidTokenMessage = "This reset link is invalid or has expired.",
   onSuccess,
 }: ResetPasswordFormProps) {
   const client = useAuth();
+
+  const resolved =
+    token !== undefined
+      ? { token, invalid: false }
+      : typeof window === "undefined"
+        ? { token: null, invalid: false }
+        : readResetPasswordSearch(window.location.search);
+  const linkInvalid = resolved.invalid || resolved.token === null;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -96,7 +134,7 @@ export function ResetPasswordForm({
     try {
       const response = await client.resetPassword({
         newPassword: validation.data.password,
-        token,
+        token: resolved.token ?? "",
       });
 
       if (response.error !== null) {
@@ -118,10 +156,32 @@ export function ResetPasswordForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthError message={error} className={errorClassName} />
 
-        {success ? (
-          <p className="text-center text-sm text-kumo-subtle">
-            {successMessage}
-          </p>
+        {linkInvalid ? (
+          <>
+            <p className="text-center text-sm text-kumo-subtle">
+              {invalidTokenMessage}
+            </p>
+            {forgotPasswordHref ? (
+              <p className="text-center text-sm text-kumo-subtle">
+                <Link href={forgotPasswordHref} variant="inline">
+                  Request a new reset link
+                </Link>
+              </p>
+            ) : null}
+          </>
+        ) : success ? (
+          <>
+            <p className="text-center text-sm text-kumo-subtle">
+              {successMessage}
+            </p>
+            {signInUrl ? (
+              <p className="text-center text-sm text-kumo-subtle">
+                <Link href={signInUrl} variant="inline">
+                  Sign in
+                </Link>
+              </p>
+            ) : null}
+          </>
         ) : (
           <>
             <Input
