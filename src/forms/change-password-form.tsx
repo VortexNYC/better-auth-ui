@@ -14,6 +14,11 @@ export interface ChangePasswordFormProps {
   newPasswordLabel?: string;
   confirmPasswordLabel?: string;
   revokeOtherSessionsLabel?: string;
+  /**
+   * Client-side minimum password length. Should mirror the Better Auth
+   * `emailAndPassword.minPasswordLength` configured on the server.
+   */
+  minPasswordLength?: number;
   submitLabel?: string;
   submittingLabel?: string;
   unavailableMessage?: string;
@@ -32,6 +37,7 @@ export function ChangePasswordForm({
   newPasswordLabel = "New password",
   confirmPasswordLabel = "Confirm new password",
   revokeOtherSessionsLabel = "Sign out other sessions",
+  minPasswordLength = 8,
   submitLabel = "Update password",
   submittingLabel = "Updating…",
   unavailableMessage = "Password change is not available.",
@@ -55,8 +61,8 @@ export function ChangePasswordForm({
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters.");
+    if (newPassword.length < minPasswordLength) {
+      setError(`Password must be at least ${minPasswordLength} characters.`);
       return;
     }
 

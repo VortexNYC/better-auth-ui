@@ -13,6 +13,8 @@ import {
 } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
+import { VerifyBackupCodeForm } from "./verify-backup-code-form";
+import { VerifyTotpForm } from "./verify-totp-form";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -27,6 +29,11 @@ export interface SignInFormProps extends AuthFormBaseProps {
   redirectTo?: string;
   forgotPasswordHref?: string;
   signUpUrl?: string;
+  /**
+   * Show the "trust this device" checkbox on the two-factor step rendered
+   * when the server answers sign-in with `twoFactorRedirect`.
+   */
+  showTrustDevice?: boolean;
   submitLabel?: string;
   submittingLabel?: string;
   providers?: readonly AuthProviderOption[];
@@ -46,6 +53,7 @@ export function SignInForm({
   redirectTo,
   forgotPasswordHref,
   signUpUrl,
+  showTrustDevice = false,
   className,
   errorClassName,
   submitLabel = "Sign in",
@@ -62,6 +70,16 @@ export function SignInForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<SignInValues>>({});
+  const [step, setStep] = useState<"credentials" | "totp" | "backup">(
+    "credentials",
+  );
+
+  function finishSignIn() {
+    onSuccess?.();
+    if (typeof window !== "undefined" && redirectTo) {
+      window.location.assign(redirectTo);
+    }
+  }
 
   async function handleProviderSelect(providerId: string) {
     if (onProviderSelect) {
@@ -130,22 +148,39 @@ export function SignInForm({
         (response.data as { twoFactorRedirect?: unknown }).twoFactorRedirect ===
           true
       ) {
-        // Two-factor is handled by a separate form surface. Surface a message
-        // so callers know to redirect or render the TOTP step.
-        setError("Two-factor authentication required.");
+        setStep("totp");
         return;
       }
 
-      onSuccess?.();
-
-      if (typeof window !== "undefined" && redirectTo) {
-        window.location.assign(redirectTo);
-      }
+      finishSignIn();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed.");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (step === "totp") {
+    return (
+      <VerifyTotpForm
+        className={className}
+        errorClassName={errorClassName}
+        showTrustDevice={showTrustDevice}
+        onUseBackupCode={() => setStep("backup")}
+        onSuccess={finishSignIn}
+      />
+    );
+  }
+
+  if (step === "backup") {
+    return (
+      <VerifyBackupCodeForm
+        className={className}
+        errorClassName={errorClassName}
+        onUseTotp={() => setStep("totp")}
+        onSuccess={finishSignIn}
+      />
+    );
   }
 
   return (

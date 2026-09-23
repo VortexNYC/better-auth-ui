@@ -13,6 +13,9 @@ export interface VerifyTotpFormProps extends AuthFormBaseProps {
   unavailableMessage?: string;
   showTrustDevice?: boolean;
   trustDeviceLabel?: string;
+  /** When provided, renders a "use a backup code" toggle (e.g. sign-in 2FA). */
+  onUseBackupCode?: () => void;
+  backupCodeLabel?: string;
 }
 
 /**
@@ -29,6 +32,8 @@ export function VerifyTotpForm({
   unavailableMessage = "Two-factor authentication is not available.",
   showTrustDevice = false,
   trustDeviceLabel = "Trust this device",
+  onUseBackupCode,
+  backupCodeLabel = "Use a backup code",
   onSuccess,
 }: VerifyTotpFormProps) {
   const client = useAuth();
@@ -113,6 +118,18 @@ export function VerifyTotpForm({
         <AuthSubmitButton loading={isSubmitting} className="w-full">
           {isSubmitting ? submittingLabel : submitLabel}
         </AuthSubmitButton>
+
+        {onUseBackupCode !== undefined ? (
+          <p className="text-center text-sm text-kumo-subtle">
+            <button
+              type="button"
+              onClick={onUseBackupCode}
+              className="underline hover:text-kumo-default"
+            >
+              {backupCodeLabel}
+            </button>
+          </p>
+        ) : null}
       </form>
     </AuthCard>
   );

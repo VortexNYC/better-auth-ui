@@ -144,4 +144,76 @@ describe("SignInForm", () => {
       await screen.findByText("Social sign-in is not available."),
     ).toBeDefined();
   });
+
+  it("moves to the TOTP step when the server requires two-factor", async () => {
+    const signInEmail = vi
+      .fn()
+      .mockResolvedValue({ data: { twoFactorRedirect: true }, error: null });
+    const verifyTotp = vi.fn().mockResolvedValue({ error: null });
+    const onSuccess = vi.fn();
+    const client = {
+      signIn: { email: signInEmail },
+      twoFactor: { verifyTotp },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(<SignInForm onSuccess={onSuccess} />, client);
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    // Credentials step swaps to the TOTP step.
+    expect(
+      await screen.findByLabelText(/6-digit|code|Code/i),
+    ).toBeDefined();
+    expect(screen.queryByLabelText("Email")).toBeNull();
+
+    fireEvent.change(screen.getByLabelText(/code/i), {
+      target: { value: "123456" },
+    });
+    fireEvent.submit(getForm());
+
+    await expect.poll(() => verifyTotp.mock.calls.length).toBe(1);
+    expect(verifyTotp).toHaveBeenCalledWith({
+      code: "123456",
+      trustDevice: false,
+    });
+    expect(onSuccess).toHaveBeenCalled();
+  });
+
+  it("can switch from TOTP to the backup-code step and back", async () => {
+    const signInEmail = vi
+      .fn()
+      .mockResolvedValue({ data: { twoFactorRedirect: true }, error: null });
+    const verifyBackupCode = vi.fn().mockResolvedValue({ error: null });
+    const client = {
+      signIn: { email: signInEmail },
+      twoFactor: { verifyTotp: vi.fn(), verifyBackupCode },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(<SignInForm />, client);
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Use a backup code" }),
+    );
+    expect(await screen.findByLabelText("Backup code")).toBeDefined();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use authenticator app" }),
+    );
+    expect(await screen.findByLabelText(/code/i)).toBeDefined();
+    expect(screen.queryByLabelText("Backup code")).toBeNull();
+  });
 });

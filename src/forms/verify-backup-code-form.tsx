@@ -14,6 +14,9 @@ export interface VerifyBackupCodeFormProps {
   submittingLabel?: string;
   trustDeviceLabel?: string;
   unavailableMessage?: string;
+  /** When provided, renders a "use authenticator app" toggle (e.g. sign-in 2FA). */
+  onUseTotp?: () => void;
+  totpLabel?: string;
   onSuccess?: () => void;
 }
 
@@ -30,6 +33,8 @@ export function VerifyBackupCodeForm({
   submittingLabel = "Verifying…",
   trustDeviceLabel = "Trust this device",
   unavailableMessage = "Backup code verification is not available.",
+  onUseTotp,
+  totpLabel = "Use authenticator app",
   onSuccess,
 }: VerifyBackupCodeFormProps) {
   const client = useAuth();
@@ -100,6 +105,18 @@ export function VerifyBackupCodeForm({
         <AuthSubmitButton loading={isSubmitting} className="w-full">
           {isSubmitting ? submittingLabel : submitLabel}
         </AuthSubmitButton>
+
+        {onUseTotp !== undefined ? (
+          <p className="text-center text-sm text-kumo-subtle">
+            <button
+              type="button"
+              onClick={onUseTotp}
+              className="underline hover:text-kumo-default"
+            >
+              {totpLabel}
+            </button>
+          </p>
+        ) : null}
       </form>
     </AuthCard>
   );
