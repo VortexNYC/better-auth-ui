@@ -167,9 +167,7 @@ describe("SignInForm", () => {
     fireEvent.submit(getForm());
 
     // Credentials step swaps to the TOTP step.
-    expect(
-      await screen.findByLabelText(/6-digit|code|Code/i),
-    ).toBeDefined();
+    expect(await screen.findByLabelText(/6-digit|code|Code/i)).toBeDefined();
     expect(screen.queryByLabelText("Email")).toBeNull();
 
     fireEvent.change(screen.getByLabelText(/code/i), {

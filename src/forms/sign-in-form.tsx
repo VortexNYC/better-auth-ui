@@ -12,6 +12,7 @@ import {
   type AuthProviderOption,
 } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
+import { TurnstileWidget } from "../turnstile";
 import type { AuthFormBaseProps } from "../types";
 import { VerifyBackupCodeForm } from "./verify-backup-code-form";
 import { VerifyTotpForm } from "./verify-totp-form";
@@ -34,6 +35,12 @@ export interface SignInFormProps extends AuthFormBaseProps {
    * when the server answers sign-in with `twoFactorRedirect`.
    */
   showTrustDevice?: boolean;
+  /**
+   * Cloudflare Turnstile site key. When set, renders the managed widget and
+   * sends the token on `x-captcha-response` — pair with the Better Auth
+   * captcha plugin guarding `/sign-in/email`.
+   */
+  captchaSiteKey?: string;
   submitLabel?: string;
   submittingLabel?: string;
   providers?: readonly AuthProviderOption[];
@@ -54,6 +61,7 @@ export function SignInForm({
   forgotPasswordHref,
   signUpUrl,
   showTrustDevice = false,
+  captchaSiteKey,
   className,
   errorClassName,
   submitLabel = "Sign in",
@@ -73,6 +81,8 @@ export function SignInForm({
   const [step, setStep] = useState<"credentials" | "totp" | "backup">(
     "credentials",
   );
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
 
   function finishSignIn() {
     onSuccess?.();
@@ -127,6 +137,11 @@ export function SignInForm({
       return;
     }
 
+    if (captchaSiteKey !== undefined && captchaToken === null) {
+      setError("Complete the verification check.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -134,10 +149,20 @@ export function SignInForm({
         email: validation.data.email,
         password: validation.data.password,
         callbackURL: redirectTo,
+        ...(captchaToken === null
+          ? {}
+          : {
+              fetchOptions: {
+                headers: { "x-captcha-response": captchaToken },
+              },
+            }),
       });
 
       if (response.error !== null) {
         setError(response.error.message ?? "Sign-in failed.");
+        // Turnstile tokens are single-use — mint a fresh one on failure.
+        setCaptchaToken(null);
+        setCaptchaResetKey((key) => key + 1);
         return;
       }
 
@@ -227,6 +252,14 @@ export function SignInForm({
               Forgot password?
             </Link>
           </div>
+        ) : null}
+
+        {captchaSiteKey !== undefined ? (
+          <TurnstileWidget
+            siteKey={captchaSiteKey}
+            onToken={setCaptchaToken}
+            resetKey={captchaResetKey}
+          />
         ) : null}
 
         <AuthSubmitButton loading={isSubmitting} className="w-full">

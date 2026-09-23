@@ -150,6 +150,84 @@ describe("SignUpForm", () => {
     expect(await screen.findByText("Verification email resent.")).toBeDefined();
   });
 
+  it("sends the captcha token on x-captcha-response when configured", async () => {
+    const signUpEmail = vi.fn().mockResolvedValue({
+      data: { token: "session-token", user: {} },
+      error: null,
+    });
+    const renderWidget = vi.fn((_el, options) => {
+      options.callback("turnstile-token-123");
+      return "widget-1";
+    });
+    window.turnstile = {
+      render: renderWidget,
+      remove: vi.fn(),
+    };
+
+    renderWithAuth(
+      <SignUpForm redirectTo="/dashboard" captchaSiteKey="site-key" />,
+      createMockClient(signUpEmail),
+    );
+    await expect.poll(() => renderWidget.mock.calls.length).toBe(1);
+
+    fireEvent.change(screen.getByLabelText("Name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    await expect.poll(() => signUpEmail.mock.calls.length).toBe(1);
+    expect(signUpEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fetchOptions: {
+          headers: { "x-captcha-response": "turnstile-token-123" },
+        },
+      }),
+    );
+    delete window.turnstile;
+  });
+
+  it("blocks submit when captcha is configured but unsolved", async () => {
+    const signUpEmail = vi.fn();
+    window.turnstile = {
+      render: vi.fn(() => "widget-1"),
+      remove: vi.fn(),
+    };
+
+    renderWithAuth(
+      <SignUpForm captchaSiteKey="site-key" />,
+      createMockClient(signUpEmail),
+    );
+
+    fireEvent.change(screen.getByLabelText("Name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm password"), {
+      target: { value: "password123" },
+    });
+    fireEvent.submit(getForm());
+
+    expect(
+      await screen.findByText("Complete the verification check."),
+    ).toBeDefined();
+    expect(signUpEmail).not.toHaveBeenCalled();
+    delete window.turnstile;
+  });
+
   it("redirects as before when sign-up returns a session", async () => {
     const signUpEmail = vi.fn().mockResolvedValue({
       data: { token: "session-token", user: {} },

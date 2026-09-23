@@ -114,10 +114,7 @@ describe("ResetPasswordForm", () => {
     window.history.pushState({}, "", "/reset-password?token=url-token-9");
     const resetPassword = vi.fn().mockResolvedValue({ error: null });
 
-    renderWithAuth(
-      <ResetPasswordForm />,
-      createMockClient(resetPassword),
-    );
+    renderWithAuth(<ResetPasswordForm />, createMockClient(resetPassword));
 
     fireEvent.change(screen.getByLabelText("New password"), {
       target: { value: "password123" },
@@ -137,9 +134,7 @@ describe("ResetPasswordForm", () => {
   it("shows the invalid-link state for ?error=INVALID_TOKEN", () => {
     window.history.pushState({}, "", "/reset-password?error=INVALID_TOKEN");
 
-    renderWithAuth(
-      <ResetPasswordForm forgotPasswordHref="/forgot-password" />,
-    );
+    renderWithAuth(<ResetPasswordForm forgotPasswordHref="/forgot-password" />);
 
     expect(
       screen.getByText("This reset link is invalid or has expired."),
@@ -166,9 +161,7 @@ describe("ResetPasswordForm", () => {
     });
     fireEvent.submit(getForm());
 
-    expect(
-      await screen.findByRole("link", { name: "Sign in" }),
-    ).toBeDefined();
+    expect(await screen.findByRole("link", { name: "Sign in" })).toBeDefined();
   });
 });
 

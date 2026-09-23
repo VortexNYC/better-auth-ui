@@ -13,6 +13,7 @@ import {
   type AuthProviderOption,
 } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
+import { TurnstileWidget } from "../turnstile";
 import type { AuthFormBaseProps } from "../types";
 
 const createSignUpSchema = (minPasswordLength: number) =>
@@ -63,6 +64,12 @@ export interface SignUpFormProps extends AuthFormBaseProps {
   verifyEmailTitle?: string;
   verifyEmailDescription?: string;
   resendVerificationLabel?: string;
+  /**
+   * Cloudflare Turnstile site key. When set, renders the managed widget and
+   * sends the token on `x-captcha-response` — pair with the Better Auth
+   * captcha plugin guarding `/sign-up/email`.
+   */
+  captchaSiteKey?: string;
 }
 
 /**
@@ -84,6 +91,7 @@ export function SignUpForm({
   verifyEmailTitle = "Check your email",
   verifyEmailDescription = "We sent a verification link to your inbox. Click it to activate your account.",
   resendVerificationLabel = "Resend verification email",
+  captchaSiteKey,
   onSuccess,
 }: SignUpFormProps) {
   const client = useAuth();
@@ -98,6 +106,8 @@ export function SignUpForm({
   const [awaitingVerification, setAwaitingVerification] = useState(false);
   const [verificationResent, setVerificationResent] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
 
   async function handleResendVerification() {
     if (client.sendVerificationEmail === undefined) {
@@ -182,6 +192,11 @@ export function SignUpForm({
       return;
     }
 
+    if (captchaSiteKey !== undefined && captchaToken === null) {
+      setError("Complete the verification check.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -190,10 +205,20 @@ export function SignUpForm({
         email: validation.data.email,
         password: validation.data.password,
         callbackURL: redirectTo,
+        ...(captchaToken === null
+          ? {}
+          : {
+              fetchOptions: {
+                headers: { "x-captcha-response": captchaToken },
+              },
+            }),
       });
 
       if (response.error !== null) {
         setError(response.error.message ?? "Sign-up failed.");
+        // Turnstile tokens are single-use — mint a fresh one on failure.
+        setCaptchaToken(null);
+        setCaptchaResetKey((key) => key + 1);
         return;
       }
 
@@ -320,6 +345,14 @@ export function SignUpForm({
           autoComplete="new-password"
           required
         />
+
+        {captchaSiteKey !== undefined ? (
+          <TurnstileWidget
+            siteKey={captchaSiteKey}
+            onToken={setCaptchaToken}
+            resetKey={captchaResetKey}
+          />
+        ) : null}
 
         <AuthSubmitButton loading={isSubmitting} className="w-full">
           {isSubmitting ? submittingLabel : submitLabel}

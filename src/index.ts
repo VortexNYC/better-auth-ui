@@ -9,6 +9,7 @@ export {
   type AuthLoadingProps,
 } from "./auth-boundaries";
 export { SignOutButton, type SignOutButtonProps } from "./sign-out-button";
+export { TurnstileWidget, type TurnstileWidgetProps } from "./turnstile";
 export { UserButton, type UserButtonProps } from "./user-button";
 export {
   AuthCard,

@@ -65,7 +65,10 @@ export function readResetPasswordSearch(search: string): {
     return { token: null, invalid: true };
   }
   const token = params.get("token");
-  return { token: token === null || token.length === 0 ? null : token, invalid: false };
+  return {
+    token: token === null || token.length === 0 ? null : token,
+    invalid: false,
+  };
 }
 
 /**

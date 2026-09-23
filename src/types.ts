@@ -6,6 +6,11 @@ export interface AuthResult {
   error: { message?: string } | null;
 }
 
+/** Per-call fetch overrides — captcha tokens ride `x-captcha-response` here. */
+export interface AuthFetchOptions {
+  headers?: Record<string, string>;
+}
+
 /**
  * A generic Better Auth session state.
  */
@@ -42,6 +47,7 @@ export interface AnyAuthClient {
       email: string;
       password: string;
       callbackURL?: string;
+      fetchOptions?: AuthFetchOptions;
     }): Promise<AuthResult>;
     social?(args: {
       provider: string;
@@ -59,6 +65,7 @@ export interface AnyAuthClient {
       email: string;
       password: string;
       callbackURL?: string;
+      fetchOptions?: AuthFetchOptions;
     }): Promise<AuthResult>;
   };
 
@@ -71,6 +78,7 @@ export interface AnyAuthClient {
   requestPasswordReset?: (args: {
     email: string;
     redirectTo?: string;
+    fetchOptions?: AuthFetchOptions;
   }) => Promise<AuthResult>;
   resetPassword?: (args: {
     newPassword: string;

@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
+import { TurnstileWidget } from "../turnstile";
 import type { AuthFormBaseProps } from "../types";
 
 const forgotPasswordSchema = z.object({
@@ -22,6 +23,12 @@ export interface ForgotPasswordFormProps extends AuthFormBaseProps {
    */
   resetPasswordUrl?: string;
   signInUrl?: string;
+  /**
+   * Cloudflare Turnstile site key. When set, renders the managed widget and
+   * sends the token on `x-captcha-response` — pair with the Better Auth
+   * captcha plugin guarding `/request-password-reset`.
+   */
+  captchaSiteKey?: string;
   submitLabel?: string;
   submittingLabel?: string;
   successMessage?: string;
@@ -35,6 +42,7 @@ export function ForgotPasswordForm({
   description = "Enter your email and we'll send you a reset link.",
   resetPasswordUrl,
   signInUrl,
+  captchaSiteKey,
   className,
   errorClassName,
   submitLabel = "Send reset link",
@@ -51,6 +59,8 @@ export function ForgotPasswordForm({
     {},
   );
   const [success, setSuccess] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,6 +83,12 @@ export function ForgotPasswordForm({
       return;
     }
 
+    if (captchaSiteKey !== undefined && captchaToken === null) {
+      setError("Complete the verification check.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await client.requestPasswordReset({
         email: validation.data.email,
@@ -81,10 +97,20 @@ export function ForgotPasswordForm({
           (typeof window === "undefined"
             ? undefined
             : `${window.location.origin}/reset-password`),
+        ...(captchaToken === null
+          ? {}
+          : {
+              fetchOptions: {
+                headers: { "x-captcha-response": captchaToken },
+              },
+            }),
       });
 
       if (response.error !== null) {
         setError(response.error.message ?? "Request failed.");
+        // Turnstile tokens are single-use — mint a fresh one on failure.
+        setCaptchaToken(null);
+        setCaptchaResetKey((key) => key + 1);
         return;
       }
 
@@ -117,6 +143,14 @@ export function ForgotPasswordForm({
               autoComplete="email"
               required
             />
+
+            {captchaSiteKey !== undefined ? (
+              <TurnstileWidget
+                siteKey={captchaSiteKey}
+                onToken={setCaptchaToken}
+                resetKey={captchaResetKey}
+              />
+            ) : null}
 
             <AuthSubmitButton loading={isSubmitting} className="w-full">
               {isSubmitting ? submittingLabel : submitLabel}
