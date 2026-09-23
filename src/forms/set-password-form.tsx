@@ -6,23 +6,37 @@ import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
 
-const setPasswordSchema = z
-  .object({
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const createSetPasswordSchema = (minPasswordLength: number) =>
+  z
+    .object({
+      newPassword: z
+        .string()
+        .min(
+          minPasswordLength,
+          `Password must be at least ${minPasswordLength} characters`,
+        ),
+      confirmPassword: z.string().min(1, "Confirm your password"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
-type SetPasswordValues = z.infer<typeof setPasswordSchema>;
+type SetPasswordValues = {
+  newPassword?: string;
+  confirmPassword?: string;
+};
 
 export interface SetPasswordFormProps extends AuthFormBaseProps {
   title?: string;
   description?: string;
   passwordLabel?: string;
   confirmLabel?: string;
+  /**
+   * Client-side minimum password length. Should mirror the Better Auth
+   * `emailAndPassword.minPasswordLength` configured on the server.
+   */
+  minPasswordLength?: number;
   submitLabel?: string;
   submittingLabel?: string;
   successMessage?: string;
@@ -36,6 +50,7 @@ export interface SetPasswordFormProps extends AuthFormBaseProps {
 export function SetPasswordForm({
   title = "Set password",
   description = "Create a password so you can sign in with your email next time.",
+  minPasswordLength = 8,
   className,
   errorClassName,
   passwordLabel = "New password",
@@ -73,7 +88,7 @@ export function SetPasswordForm({
     setSuccess(false);
     setFieldErrors({});
 
-    const validation = setPasswordSchema.safeParse({
+    const validation = createSetPasswordSchema(minPasswordLength).safeParse({
       newPassword,
       confirmPassword,
     });

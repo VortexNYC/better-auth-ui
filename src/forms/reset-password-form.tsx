@@ -6,22 +6,36 @@ import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
 
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Confirm password is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const createResetPasswordSchema = (minPasswordLength: number) =>
+  z
+    .object({
+      password: z
+        .string()
+        .min(
+          minPasswordLength,
+          `Password must be at least ${minPasswordLength} characters`,
+        ),
+      confirmPassword: z.string().min(1, "Confirm password is required"),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
-type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordValues = {
+  password?: string;
+  confirmPassword?: string;
+};
 
 export interface ResetPasswordFormProps extends AuthFormBaseProps {
   token: string;
   title?: string;
   description?: string;
+  /**
+   * Client-side minimum password length. Should mirror the Better Auth
+   * `emailAndPassword.minPasswordLength` configured on the server.
+   */
+  minPasswordLength?: number;
   submitLabel?: string;
   submittingLabel?: string;
   successMessage?: string;
@@ -34,6 +48,7 @@ export function ResetPasswordForm({
   token,
   title = "Reset password",
   description = "Choose a new password for your account.",
+  minPasswordLength = 8,
   className,
   errorClassName,
   submitLabel = "Reset password",
@@ -58,7 +73,7 @@ export function ResetPasswordForm({
     setFieldErrors({});
     setSuccess(false);
 
-    const validation = resetPasswordSchema.safeParse({
+    const validation = createResetPasswordSchema(minPasswordLength).safeParse({
       password,
       confirmPassword,
     });

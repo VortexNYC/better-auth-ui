@@ -1,6 +1,6 @@
 {
   "name": "@vortex-api/better-auth-ui",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Kumo-based React components for Better Auth",
   "license": "MIT",
   "author": "Shlomo Kabareti <shlomo@vortex.nyc>",
@@ -31,7 +31,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "tsc --noEmit && prettier --check .",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "prepare": "pnpm run build"
   },
   "packageManager": "pnpm@11.13.1",
   "repository": {

@@ -14,25 +14,41 @@ import {
 import { useAuth } from "../auth-provider";
 import type { AuthFormBaseProps } from "../types";
 
-const signUpSchema = z
-  .object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Confirm password is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const createSignUpSchema = (minPasswordLength: number) =>
+  z
+    .object({
+      name: z.string().min(1, "Name is required"),
+      email: z.string().email("Please enter a valid email address"),
+      password: z
+        .string()
+        .min(
+          minPasswordLength,
+          `Password must be at least ${minPasswordLength} characters`,
+        ),
+      confirmPassword: z.string().min(1, "Confirm password is required"),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
-type SignUpValues = z.infer<typeof signUpSchema>;
+type SignUpValues = {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+};
 
 export interface SignUpFormProps extends AuthFormBaseProps {
   title?: string;
   description?: string;
   redirectTo?: string;
   signInUrl?: string;
+  /**
+   * Client-side minimum password length. Should mirror the Better Auth
+   * `emailAndPassword.minPasswordLength` configured on the server.
+   */
+  minPasswordLength?: number;
   submitLabel?: string;
   submittingLabel?: string;
   providers?: readonly AuthProviderOption[];
@@ -48,6 +64,7 @@ export function SignUpForm({
   description = "Get started with your workspace.",
   redirectTo,
   signInUrl,
+  minPasswordLength = 8,
   className,
   errorClassName,
   submitLabel = "Create account",
@@ -103,7 +120,7 @@ export function SignUpForm({
     setError(null);
     setFieldErrors({});
 
-    const validation = signUpSchema.safeParse({
+    const validation = createSignUpSchema(minPasswordLength).safeParse({
       name,
       email,
       password,
