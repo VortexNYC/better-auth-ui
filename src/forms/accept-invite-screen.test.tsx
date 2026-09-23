@@ -22,13 +22,29 @@ describe("AcceptInviteScreen", () => {
       }),
     } as unknown as AnyAuthClient;
 
-    renderWithAuth(<AcceptInviteScreen token="inv_1" />, client);
+    const onSignIn = vi.fn();
+    const onSignUp = vi.fn();
+
+    renderWithAuth(
+      <AcceptInviteScreen
+        token="inv_1"
+        onSignIn={onSignIn}
+        onSignUp={onSignUp}
+      />,
+      client,
+    );
 
     expect(
       screen.getByText(
         "Sign in or create an account to accept this invitation.",
       ),
     ).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign in to accept" }));
+    expect(onSignIn).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Create an account" }));
+    expect(onSignUp).toHaveBeenCalled();
   });
 
   it("auto-accepts the invitation when a session exists", async () => {

@@ -1,18 +1,18 @@
-# @vortexnyc/better-auth-ui
+# @vortex-api/better-auth-ui
 
 Kumo-based React components and React Email templates for [Better Auth](https://www.better-auth.com).
 
 ## Install
 
 ```bash
-pnpm add @vortexnyc/better-auth-ui @cloudflare/kumo @phosphor-icons/react better-auth react react-dom react-email zod
+pnpm add @vortex-api/better-auth-ui @cloudflare/kumo @phosphor-icons/react better-auth react react-dom react-email zod
 ```
 
 ## Usage
 
 ```tsx
 import { createAuthClient } from "better-auth/react";
-import { AuthProvider, SignInForm } from "@vortexnyc/better-auth-ui";
+import { AuthProvider, SignInForm } from "@vortex-api/better-auth-ui";
 
 const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_BETTER_AUTH_URL,
@@ -30,52 +30,19 @@ const authClient = createAuthClient({
 </AuthProvider>;
 ```
 
-## Components
+## Theming
 
-| Component                                                                         | Status |
-| --------------------------------------------------------------------------------- | ------ |
-| `AuthProvider` / `useAuth`                                                        | Ready  |
-| `Authenticated` / `Unauthenticated` / `AuthLoading`                               | Ready  |
-| `AuthCard`, `AuthError`, `AuthSubmitButton`, `AuthProviderButtons`, `AuthDivider` | Ready  |
-| `SignOutButton` / `UserButton`                                                    | Ready  |
-| `SignInForm` (email + social + magic link)                                        | Ready  |
-| `SignUpForm` (email + social providers)                                           | Ready  |
-| `MagicLinkSignInForm`                                                             | Ready  |
-| `MagicLinkVerify`                                                                 | Ready  |
-| `ForgotPasswordForm`                                                              | Ready  |
-| `ResetPasswordForm`                                                               | Ready  |
-| `VerifyEmailForm`                                                                 | Ready  |
-| `EnableTwoFactorForm` / `VerifyTotpForm`                                          | Ready  |
-| `SessionList`                                                                     | Ready  |
-| `CreateOrganizationForm`                                                          | Ready  |
-| `OrganizationList`                                                                | Ready  |
-| `OrganizationSwitcher`                                                            | Ready  |
-| `OrganizationProfile`                                                             | Ready  |
-| `OrganizationMembers` / `InviteMemberForm`                                        | Ready  |
-| `AcceptInviteScreen`                                                              | Ready  |
-| `UserProfileForm`                                                                 | Ready  |
-| `ChangeEmailForm`                                                                 | Ready  |
-| `VerifyBackupCodeForm`                                                            | Ready  |
-| `DisableTwoFactorForm`                                                            | Ready  |
-| `GenerateBackupCodesForm`                                                         | Ready  |
-| `ChangePasswordForm`                                                              | Ready  |
-| `SetPasswordForm`                                                                 | Ready  |
-| `DeleteAccountForm`                                                               | Ready  |
-| `ConnectedAccounts`                                                               | Ready  |
-| `VerificationEmail`                                                               | Ready  |
-| `PasswordResetEmail`                                                              | Ready  |
-| `OrganizationInvitationEmail`                                                     | Ready  |
-| `ChangeEmailConfirmation`                                                         | Ready  |
-| `WelcomeEmail`                                                                    | Ready  |
-| `PasswordChangedEmail`                                                            | Ready  |
-| `MagicLinkEmail`                                                                  | Ready  |
+Forms use Kumo components and `text-kumo-*` / `border-kumo-*` utilities. Import
+Kumo styles in the consumer app (for example `@cloudflare/kumo/styles`) so those
+tokens resolve. Pair with your product theme — Seal maps the same names onto
+Taupe in `@seal/tokens`.
 
 ## Email templates
 
 Render email HTML on the server with `react-email` and pass it to your Better Auth email transport (Cloudflare Email, etc.):
 
 ```tsx
-import { render, VerificationEmail } from "@vortexnyc/better-auth-ui";
+import { render, VerificationEmail } from "@vortex-api/better-auth-ui/emails";
 
 const html = render(
   <VerificationEmail

@@ -16,6 +16,9 @@ export interface AcceptInviteScreenProps {
   onSuccess?: () => void;
   onSignIn?: () => void;
   signInLabel?: string;
+  /** Shown next to sign-in when the user has no session (invite → create account). */
+  onSignUp?: () => void;
+  signUpLabel?: string;
 }
 
 type InviteStatus = "idle" | "accepting" | "accepted" | "error";
@@ -37,6 +40,8 @@ export function AcceptInviteScreen({
   onSuccess,
   onSignIn,
   signInLabel = "Sign in to accept",
+  onSignUp,
+  signUpLabel = "Create an account",
 }: AcceptInviteScreenProps) {
   const client = useAuth();
   const session = client.useSession?.();
@@ -109,16 +114,28 @@ export function AcceptInviteScreen({
           message="Sign in or create an account to accept this invitation."
           className={errorClassName}
         />
-        {onSignIn ? (
-          <Button
-            type="button"
-            variant="primary"
-            className="w-full"
-            onClick={onSignIn}
-          >
-            {signInLabel}
-          </Button>
-        ) : null}
+        <div className="flex flex-col gap-2">
+          {onSignIn ? (
+            <Button
+              type="button"
+              variant="primary"
+              className="w-full"
+              onClick={onSignIn}
+            >
+              {signInLabel}
+            </Button>
+          ) : null}
+          {onSignUp ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={onSignUp}
+            >
+              {signUpLabel}
+            </Button>
+          ) : null}
+        </div>
       </AuthCard>
     );
   }
