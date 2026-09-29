@@ -31,6 +31,40 @@ function defaultFormatTimestamp(value: string | Date): string {
   return d.toLocaleString();
 }
 
+/** Clerk/AuthKit-style short label — never dump the raw UA into the row. */
+function summarizeUserAgent(userAgent: string | null | undefined): string {
+  if (userAgent === null || userAgent === undefined || userAgent.length === 0) {
+    return "Device";
+  }
+
+  const ua = userAgent;
+  const browser = ua.includes("Edg/")
+    ? "Edge"
+    : ua.includes("Chrome/")
+      ? "Chrome"
+      : ua.includes("Firefox/")
+        ? "Firefox"
+        : ua.includes("Safari/") && !ua.includes("Chrome/")
+          ? "Safari"
+          : ua.startsWith("curl/")
+            ? "curl"
+            : "Browser";
+
+  const os = ua.includes("Android")
+    ? "Android"
+    : ua.includes("iPhone") || ua.includes("iPad")
+      ? "iOS"
+      : ua.includes("Mac OS X") || ua.includes("Macintosh")
+        ? "macOS"
+        : ua.includes("Windows")
+          ? "Windows"
+          : ua.includes("Linux")
+            ? "Linux"
+            : null;
+
+  return os === null ? browser : `${browser} on ${os}`;
+}
+
 /**
  * List active Better Auth sessions with per-session and bulk revoke actions.
  */
@@ -218,24 +252,23 @@ function SessionRow({
 
   return (
     <li className="flex items-start justify-between gap-4">
-      <div className="min-w-0">
-        <Text as="span" truncate>
-          {isCurrent ? currentBadgeLabel : (session.userAgent ?? "Device")}
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <span className="text-foreground min-w-0 truncate text-sm font-medium">
+            {isCurrent
+              ? currentBadgeLabel
+              : summarizeUserAgent(session.userAgent)}
+          </span>
           {isCurrent || !session.ipAddress ? null : (
-            <Text
-              as="span"
-              variant="secondary"
-              size="sm"
-              DANGEROUS_className="ml-2"
-            >
+            <span className="text-muted-foreground text-xs">
               {session.ipAddress}
-            </Text>
+            </span>
           )}
-        </Text>
+        </div>
         {updatedAt.length > 0 ? (
-          <Text as="span" variant="secondary" size="sm">
+          <div className="text-muted-foreground text-xs">
             {lastActivePrefix}: {updatedAt}
-          </Text>
+          </div>
         ) : null}
       </div>
 

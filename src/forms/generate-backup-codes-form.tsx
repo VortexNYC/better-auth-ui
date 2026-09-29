@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@cloudflare/kumo/components/button";
-import { Input } from "@cloudflare/kumo/components/input";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { Text } from "@cloudflare/kumo/components/text";
 
 import { AuthCard, AuthError } from "../auth-primitives";
@@ -107,9 +107,8 @@ export function GenerateBackupCodesForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           <AuthError message={error} className={errorClassName} />
 
-          <Input
+          <SensitiveInput
             label={passwordLabel}
-            type="password"
             value={password}
             onValueChange={setPassword}
             autoComplete="current-password"

@@ -34,7 +34,8 @@ function renderWithAuth(
 const mockSession: AuthSession = {
   id: "sess_1",
   token: "token_1",
-  userAgent: "Mozilla/5.0",
+  userAgent:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
   ipAddress: "127.0.0.1",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -60,7 +61,9 @@ describe("SessionList", () => {
       ),
     );
 
-    expect(await screen.findByText("Mozilla/5.0")).toBeDefined();
+    expect(await screen.findByText("Chrome on macOS")).toBeDefined();
+    expect(screen.getByText(/Last active:/)).toBeDefined();
+    expect(screen.queryByText(/macOSLast/)).toBeNull();
     expect(screen.getByRole("button", { name: "Revoke" })).toBeDefined();
   });
 
@@ -76,7 +79,7 @@ describe("SessionList", () => {
       createMockClient(listSessions, revokeSession),
     );
 
-    await screen.findByText("Mozilla/5.0");
+    await screen.findByText("Chrome on macOS");
 
     fireEvent.click(screen.getByRole("button", { name: "Revoke" }));
 

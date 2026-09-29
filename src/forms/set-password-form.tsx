@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "@cloudflare/kumo/components/input";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { z } from "zod";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
@@ -136,9 +136,8 @@ export function SetPasswordForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthError message={error} className={errorClassName} />
 
-        <Input
+        <SensitiveInput
           label={passwordLabel}
-          type="password"
           value={newPassword}
           onValueChange={setNewPassword}
           error={fieldErrors.newPassword}
@@ -146,9 +145,8 @@ export function SetPasswordForm({
           required
         />
 
-        <Input
+        <SensitiveInput
           label={confirmLabel}
-          type="password"
           value={confirmPassword}
           onValueChange={setConfirmPassword}
           error={fieldErrors.confirmPassword}

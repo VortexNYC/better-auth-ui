@@ -3,8 +3,6 @@ import { WarningCircle } from "@phosphor-icons/react";
 import type { ButtonProps } from "@cloudflare/kumo/components/button";
 import { Button } from "@cloudflare/kumo/components/button";
 import { Banner } from "@cloudflare/kumo/components/banner";
-import { LayerCard } from "@cloudflare/kumo/components/layer-card";
-import { Text } from "@cloudflare/kumo/components/text";
 
 export interface AuthProviderOption {
   provider: string;
@@ -64,10 +62,12 @@ export function AuthDivider({ label = "or", className }: AuthDividerProps) {
   return (
     <div className={`relative ${className ?? ""}`}>
       <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t border-kumo-hairline" />
+        <span className="w-full border-t border-[color:var(--color-kumo-border)]" />
       </div>
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-kumo-base px-2 text-kumo-subtle">{label}</span>
+      <div className="relative flex justify-center text-xs uppercase tracking-wide">
+        <span className="bg-[color:var(--color-kumo-background)] px-2 text-[color:var(--color-kumo-foreground-100)]">
+          {label}
+        </span>
       </div>
     </div>
   );
@@ -81,24 +81,37 @@ export interface AuthCardProps {
 }
 
 /**
- * Page-level card for auth forms using Kumo `LayerCard`.
+ * Page-level card for auth forms — single surface (Clerk/AuthKit shape),
+ * not a Secondary/Primary LayerCard split that reads as a Kumo demo.
  */
 export function AuthCard({
   children,
-  className = "mx-auto mt-16 w-full max-w-lg",
+  className = "mx-auto w-full max-w-md",
   title,
   description,
 }: AuthCardProps) {
   return (
-    <LayerCard className={className}>
-      <LayerCard.Secondary>
-        <Text as="h1" variant="heading">
+    <section
+      className={[
+        "rounded-xl border border-[color:var(--color-kumo-border)]",
+        "bg-[color:var(--color-kumo-background)]",
+        "shadow-[0_1px_2px_color-mix(in_oklch,var(--color-kumo-foreground)_4%,transparent),0_12px_40px_color-mix(in_oklch,var(--color-kumo-foreground)_6%,transparent)]",
+        "space-y-6 p-6 sm:p-8",
+        className,
+      ].join(" ")}
+    >
+      <header className="space-y-1.5 text-center">
+        <h1 className="m-0 text-xl font-semibold tracking-tight text-[color:var(--color-kumo-foreground)]">
           {title}
-        </Text>
-        {description ? <Text variant="secondary">{description}</Text> : null}
-      </LayerCard.Secondary>
-      <LayerCard.Primary>{children}</LayerCard.Primary>
-    </LayerCard>
+        </h1>
+        {description ? (
+          <p className="m-0 text-sm leading-relaxed text-balance text-[color:var(--color-kumo-foreground-100)]">
+            {description}
+          </p>
+        ) : null}
+      </header>
+      {children}
+    </section>
   );
 }
 

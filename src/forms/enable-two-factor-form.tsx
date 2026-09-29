@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Input } from "@cloudflare/kumo/components/input";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { Text } from "@cloudflare/kumo/components/text";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
@@ -186,9 +187,8 @@ export function EnableTwoFactorForm({
 
         {step === "password" ? (
           <form onSubmit={handleEnable} className="space-y-4">
-            <Input
+            <SensitiveInput
               label={passwordLabel}
-              type="password"
               value={password}
               onValueChange={setPassword}
               autoComplete="current-password"

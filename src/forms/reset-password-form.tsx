@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Input } from "@cloudflare/kumo/components/input";
 import { Link } from "@cloudflare/kumo/components/link";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { z } from "zod";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
@@ -187,9 +187,8 @@ export function ResetPasswordForm({
           </>
         ) : (
           <>
-            <Input
+            <SensitiveInput
               label="New password"
-              type="password"
               value={password}
               onValueChange={setPassword}
               error={fieldErrors.password}
@@ -197,9 +196,8 @@ export function ResetPasswordForm({
               required
             />
 
-            <Input
+            <SensitiveInput
               label="Confirm password"
-              type="password"
               value={confirmPassword}
               onValueChange={setConfirmPassword}
               error={fieldErrors.confirmPassword}

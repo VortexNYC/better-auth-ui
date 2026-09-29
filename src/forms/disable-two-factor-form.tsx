@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "@cloudflare/kumo/components/input";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
@@ -67,9 +67,8 @@ export function DisableTwoFactorForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthError message={error} className={errorClassName} />
 
-        <Input
+        <SensitiveInput
           label={passwordLabel}
-          type="password"
           value={password}
           onValueChange={setPassword}
           autoComplete="current-password"

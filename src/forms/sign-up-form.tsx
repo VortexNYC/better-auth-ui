@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@cloudflare/kumo/components/button";
 import { Input } from "@cloudflare/kumo/components/input";
 import { Link } from "@cloudflare/kumo/components/link";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { z } from "zod";
 
 import {
@@ -326,9 +327,8 @@ export function SignUpForm({
           required
         />
 
-        <Input
+        <SensitiveInput
           label="Password"
-          type="password"
           value={password}
           onValueChange={setPassword}
           error={fieldErrors.password}
@@ -336,9 +336,8 @@ export function SignUpForm({
           required
         />
 
-        <Input
+        <SensitiveInput
           label="Confirm password"
-          type="password"
           value={confirmPassword}
           onValueChange={setConfirmPassword}
           error={fieldErrors.confirmPassword}

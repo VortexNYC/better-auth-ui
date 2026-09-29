@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Input } from "@cloudflare/kumo/components/input";
+import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
 import { z } from "zod";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
@@ -125,9 +126,8 @@ export function DeleteAccountForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthError message={error} className={errorClassName} />
 
-        <Input
+        <SensitiveInput
           label={passwordLabel}
-          type="password"
           value={password}
           onValueChange={setPassword}
           error={fieldErrors.password}
