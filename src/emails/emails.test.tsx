@@ -37,6 +37,27 @@ describe("Email templates", () => {
     expect(html).toContain("https://example.com/reset?token=xyz");
   });
 
+  it("EmailLayout accepts brand font stacks", async () => {
+    const { EmailLayout } = await import("./email-layout");
+    const html = await render(
+      <EmailLayout
+        brandName="Seal"
+        brandColor="#2c271f"
+        fontFamilySans='"Hedvig Letters Sans", Georgia, serif'
+        fontFamilySerif='"Hedvig Letters Serif", Georgia, serif'
+        fontFaceCss='@font-face { font-family: "Hedvig Letters Sans"; src: url("https://app.seal.nyc/fonts/hedvig-letters-sans.woff2"); }'
+        previewText="Brand fonts"
+      >
+        <p>Body</p>
+      </EmailLayout>,
+    );
+
+    expect(html).toContain("Hedvig Letters Sans");
+    expect(html).toContain("Hedvig Letters Serif");
+    expect(html).toContain("hedvig-letters-sans.woff2");
+    expect(html).not.toContain("Roboto, Helvetica, Arial");
+  });
+
   it("OrganizationInvitationEmail renders the invitation details", async () => {
     const html = await render(
       <OrganizationInvitationEmail

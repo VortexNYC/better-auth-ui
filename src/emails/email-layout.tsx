@@ -10,12 +10,24 @@ import {
   Text,
 } from "react-email";
 
+const DEFAULT_FONT_FAMILY_SANS =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+
 export interface EmailLayoutProps {
   children: ReactNode;
   previewText?: string;
   brandName?: string;
   logoUrl?: string;
   brandColor?: string;
+  /** CSS font-family stack for body text. Defaults to system UI sans. */
+  fontFamilySans?: string;
+  /** Optional serif stack for the brand wordmark when no logoUrl is set. */
+  fontFamilySerif?: string;
+  /**
+   * Raw CSS inserted into `<Head>` — use for `@font-face` rules that load
+   * product-hosted woff2 files. Prefer self-hosted URLs; never Google Fonts CDN.
+   */
+  fontFaceCss?: string;
 }
 
 const defaultBrandColor = "#0052cc";
@@ -26,10 +38,17 @@ export function EmailLayout({
   brandName = "Vortex",
   logoUrl,
   brandColor = defaultBrandColor,
+  fontFamilySans = DEFAULT_FONT_FAMILY_SANS,
+  fontFamilySerif,
+  fontFaceCss,
 }: EmailLayoutProps) {
+  const brandTypeface = fontFamilySerif ?? fontFamilySans;
+
   return (
     <Html>
-      <Head />
+      <Head>
+        {fontFaceCss ? <style>{fontFaceCss}</style> : null}
+      </Head>
       {previewText ? <Preview>{previewText}</Preview> : null}
       <Body style={{ backgroundColor: "#f6f7fb", margin: 0, padding: 0 }}>
         <Container
@@ -37,8 +56,7 @@ export function EmailLayout({
             maxWidth: "600px",
             margin: "0 auto",
             padding: "40px 20px",
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+            fontFamily: fontFamilySans,
           }}
         >
           {logoUrl ? (
@@ -59,6 +77,7 @@ export function EmailLayout({
                   fontSize: "24px",
                   fontWeight: 700,
                   margin: 0,
+                  fontFamily: brandTypeface,
                 }}
               >
                 {brandName}
@@ -71,6 +90,7 @@ export function EmailLayout({
               backgroundColor: "#ffffff",
               borderRadius: "8px",
               padding: "32px",
+              fontFamily: fontFamilySans,
             }}
           >
             {children}
@@ -82,6 +102,7 @@ export function EmailLayout({
               fontSize: "12px",
               textAlign: "center",
               marginTop: "24px",
+              fontFamily: fontFamilySans,
             }}
           >
             © {new Date().getFullYear()} {brandName}. All rights reserved.
