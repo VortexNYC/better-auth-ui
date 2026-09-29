@@ -155,6 +155,20 @@ export interface AnyAuthClient {
     }>;
   };
 
+  /** Passkeys (Better Auth passkey plugin). */
+  passkey?: {
+    addPasskey(args?: {
+      name?: string;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<AuthResult>;
+    listUserPasskeys(): Promise<{
+      data?: AuthPasskey[] | null;
+      error: AuthResult["error"];
+    }>;
+    deletePasskey(args: { id: string }): Promise<AuthResult>;
+    updatePasskey?(args: { id: string; name: string }): Promise<AuthResult>;
+  };
+
   /** Organizations (Better Auth organization plugin). */
   organization?: {
     list(): Promise<{
@@ -272,6 +286,17 @@ export interface AuthInvitation {
   status?: "pending" | "accepted" | "rejected" | "canceled";
   inviterId?: string;
   expiresAt?: string | Date;
+  createdAt?: string | Date;
+}
+
+export interface AuthPasskey {
+  id: string;
+  name?: string | null;
+  publicKey?: string;
+  credentialID?: string;
+  deviceType?: string;
+  backedUp?: boolean;
+  transports?: string;
   createdAt?: string | Date;
 }
 

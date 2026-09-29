@@ -56,6 +56,7 @@ export {
   type VerifyTotpFormProps,
 } from "./forms/verify-totp-form";
 export { SessionList, type SessionListProps } from "./forms/session-list";
+export { PasskeyList, type PasskeyListProps } from "./forms/passkey-list";
 export {
   CreateOrganizationForm,
   type CreateOrganizationFormProps,
