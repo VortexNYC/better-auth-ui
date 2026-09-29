@@ -57,6 +57,10 @@ export interface AnyAuthClient {
       email: string;
       callbackURL?: string;
     }): Promise<AuthResult>;
+    passkey?(args?: {
+      autoFill?: boolean;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<AuthResult>;
   };
 
   signUp: {

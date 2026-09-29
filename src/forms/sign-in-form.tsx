@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@cloudflare/kumo/components/button";
 import { Input } from "@cloudflare/kumo/components/input";
 import { Link } from "@cloudflare/kumo/components/link";
 import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
@@ -44,6 +45,13 @@ export interface SignInFormProps extends AuthFormBaseProps {
   captchaSiteKey?: string;
   submitLabel?: string;
   submittingLabel?: string;
+  /**
+   * Render a "Sign in with a passkey" button calling `signIn.passkey`
+   * (Better Auth passkey plugin). Skips email/password entirely.
+   */
+  showPasskeySignIn?: boolean;
+  passkeySignInLabel?: string;
+  passkeySigningInLabel?: string;
   providers?: readonly AuthProviderOption[];
   onProviderSelect?: (providerId: string) => void | Promise<void>;
   dividerLabel?: string;
@@ -67,6 +75,9 @@ export function SignInForm({
   errorClassName,
   submitLabel = "Sign in",
   submittingLabel = "Signing in...",
+  showPasskeySignIn = false,
+  passkeySignInLabel = "Sign in with a passkey",
+  passkeySigningInLabel = "Follow the device prompt...",
   providers,
   onProviderSelect,
   dividerLabel = "or",
@@ -77,6 +88,7 @@ export function SignInForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasskeySigningIn, setIsPasskeySigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<SignInValues>>({});
   const [step, setStep] = useState<"credentials" | "totp" | "backup">(
@@ -120,6 +132,32 @@ export function SignInForm({
       setError(err instanceof Error ? err.message : "Social sign-in failed.");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handlePasskeySignIn() {
+    setError(null);
+
+    if (client.signIn.passkey === undefined) {
+      setError("Passkey sign-in is not available.");
+      return;
+    }
+
+    setIsPasskeySigningIn(true);
+
+    try {
+      const response = await client.signIn.passkey();
+
+      if (response.error !== null) {
+        setError(response.error.message ?? "Passkey sign-in failed.");
+        return;
+      }
+
+      finishSignIn();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Passkey sign-in failed.");
+    } finally {
+      setIsPasskeySigningIn(false);
     }
   }
 
@@ -265,6 +303,18 @@ export function SignInForm({
         <AuthSubmitButton loading={isSubmitting} className="w-full">
           {isSubmitting ? submittingLabel : submitLabel}
         </AuthSubmitButton>
+
+        {showPasskeySignIn ? (
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            onClick={() => void handlePasskeySignIn()}
+            loading={isPasskeySigningIn}
+          >
+            {isPasskeySigningIn ? passkeySigningInLabel : passkeySignInLabel}
+          </Button>
+        ) : null}
 
         {signUpUrl ? (
           <p className="text-center text-sm text-kumo-subtle">

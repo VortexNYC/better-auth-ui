@@ -214,4 +214,63 @@ describe("SignInForm", () => {
     expect(await screen.findByLabelText(/code/i)).toBeDefined();
     expect(screen.queryByLabelText("Backup code")).toBeNull();
   });
+
+  it("hides the passkey button unless showPasskeySignIn is set", () => {
+    renderWithAuth(<SignInForm />);
+
+    expect(
+      screen.queryByRole("button", { name: "Sign in with a passkey" }),
+    ).toBeNull();
+  });
+
+  it("signs in with a passkey without touching email/password", async () => {
+    const signInEmail = vi.fn();
+    const passkey = vi.fn().mockResolvedValue({ error: null });
+    const onSuccess = vi.fn();
+    const client = {
+      signIn: { email: signInEmail, passkey },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(
+      <SignInForm showPasskeySignIn onSuccess={onSuccess} />,
+      client,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sign in with a passkey" }),
+    );
+
+    await vi.waitFor(() => expect(onSuccess).toHaveBeenCalled());
+    expect(passkey).toHaveBeenCalledWith();
+    expect(signInEmail).not.toHaveBeenCalled();
+  });
+
+  it("surfaces passkey sign-in errors", async () => {
+    const passkey = vi
+      .fn()
+      .mockResolvedValue({ error: { message: "Ceremony cancelled" } });
+    const client = {
+      signIn: { email: vi.fn(), passkey },
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(<SignInForm showPasskeySignIn />, client);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sign in with a passkey" }),
+    );
+
+    expect(await screen.findByText("Ceremony cancelled")).toBeDefined();
+  });
+
+  it("reports when passkey sign-in is unavailable", async () => {
+    renderWithAuth(<SignInForm showPasskeySignIn />, createMockClient(vi.fn()));
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sign in with a passkey" }),
+    );
+
+    expect(
+      await screen.findByText("Passkey sign-in is not available."),
+    ).toBeDefined();
+  });
 });
