@@ -77,9 +77,9 @@ export function GenerateBackupCodesForm({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
+    <AuthCard variant="settings" className={className} title={title} description={description}>
       {codes !== null ? (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <Text variant="secondary" size="sm">
             {savedWarning}
           </Text>
@@ -104,7 +104,7 @@ export function GenerateBackupCodesForm({
           </Button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <AuthError message={error} className={errorClassName} />
 
           <SensitiveInput

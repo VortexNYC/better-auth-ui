@@ -90,8 +90,8 @@ export function ChangeEmailForm({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {success ? (

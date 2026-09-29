@@ -170,23 +170,23 @@ export function EnableTwoFactorForm({
 
   if (!isAvailable) {
     return (
-      <AuthCard className={className} title={title} description={description}>
+      <AuthCard variant="settings" className={className} title={title} description={description}>
         <AuthError message={unavailableMessage} className={errorClassName} />
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard
+    <AuthCard variant="settings"
       className={className}
       title={header.title}
       description={header.description}
     >
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {step === "password" ? (
-          <form onSubmit={handleEnable} className="space-y-4">
+          <form onSubmit={handleEnable} className="flex flex-col gap-4">
             <SensitiveInput
               label={passwordLabel}
               value={password}
@@ -201,7 +201,7 @@ export function EnableTwoFactorForm({
         ) : null}
 
         {step === "verify" ? (
-          <form onSubmit={handleVerify} className="space-y-4">
+          <form onSubmit={handleVerify} className="flex flex-col gap-4">
             {totpURI !== null && qrCode !== undefined ? (
               <div className="flex justify-center">{qrCode(totpURI)}</div>
             ) : null}
@@ -232,7 +232,7 @@ export function EnableTwoFactorForm({
         ) : null}
 
         {step === "backup" ? (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <ul className="grid grid-cols-2 gap-2">
               {backupCodes.map((backupCode) => (
                 <li key={backupCode}>

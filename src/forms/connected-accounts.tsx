@@ -138,8 +138,8 @@ export function ConnectedAccounts({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {isLoading ? (
@@ -147,7 +147,7 @@ export function ConnectedAccounts({
         ) : accounts.length === 0 ? (
           <Text variant="secondary">{emptyMessage}</Text>
         ) : (
-          <ul className="space-y-2">
+          <ul className="flex flex-col gap-2">
             {accounts.map((account) => (
               <li
                 key={account.id}
@@ -176,7 +176,7 @@ export function ConnectedAccounts({
             }))}
             onSelect={handleLink}
             isSubmitting={isLinking}
-            className="space-y-2"
+            className="flex flex-col gap-2"
             providerButtonClassName="w-full"
           />
         ) : null}

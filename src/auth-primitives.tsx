@@ -3,6 +3,8 @@ import { WarningCircle } from "@phosphor-icons/react";
 import type { ButtonProps } from "@cloudflare/kumo/components/button";
 import { Button } from "@cloudflare/kumo/components/button";
 import { Banner } from "@cloudflare/kumo/components/banner";
+import { LayerCard } from "@cloudflare/kumo/components/layer-card";
+import { Text } from "@cloudflare/kumo/components/text";
 
 export interface AuthProviderOption {
   provider: string;
@@ -30,7 +32,7 @@ export function AuthProviderButtons({
   providerButtonClassName,
 }: AuthProviderButtonsProps) {
   return (
-    <div className={className}>
+    <div className={["flex flex-col gap-2", className].filter(Boolean).join(" ")}>
       {providers.map((provider) => (
         <Button
           key={provider.provider}
@@ -60,14 +62,12 @@ export interface AuthDividerProps {
  */
 export function AuthDivider({ label = "or", className }: AuthDividerProps) {
   return (
-    <div className={`relative ${className ?? ""}`}>
+    <div className={["relative", className].filter(Boolean).join(" ")}>
       <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t border-[color:var(--color-kumo-border)]" />
+        <span className="border-kumo-line w-full border-t" />
       </div>
-      <div className="relative flex justify-center text-xs uppercase tracking-wide">
-        <span className="bg-[color:var(--color-kumo-background)] px-2 text-[color:var(--color-kumo-foreground-100)]">
-          {label}
-        </span>
+      <div className="relative flex justify-center text-xs tracking-wide uppercase">
+        <span className="bg-kumo-base text-kumo-subtle px-2">{label}</span>
       </div>
     </div>
   );
@@ -78,34 +78,61 @@ export interface AuthCardProps {
   className?: string;
   title: ReactNode;
   description?: ReactNode;
+  /**
+   * `auth` — centered standalone card (sign-in / sign-up).
+   * `settings` — left-aligned LayerCard for in-app account/org settings.
+   */
+  variant?: "auth" | "settings";
 }
 
 /**
- * Page-level card for auth forms — single surface (Clerk/AuthKit shape),
- * not a Secondary/Primary LayerCard split that reads as a Kumo demo.
+ * Surface for auth + account forms.
+ * Auth: single flat card (Clerk/AuthKit shape). Settings: Kumo LayerCard.
  */
 export function AuthCard({
   children,
-  className = "mx-auto w-full max-w-md",
+  className,
   title,
   description,
+  variant = "auth",
 }: AuthCardProps) {
+  if (variant === "settings") {
+    return (
+      <LayerCard className={className}>
+        <LayerCard.Secondary className="flex flex-col gap-1">
+          <Text as="h2" variant="heading">
+            {title}
+          </Text>
+          {description ? (
+            <Text as="p" variant="secondary" size="sm">
+              {description}
+            </Text>
+          ) : null}
+        </LayerCard.Secondary>
+        <LayerCard.Primary className="flex flex-col gap-4">
+          {children}
+        </LayerCard.Primary>
+      </LayerCard>
+    );
+  }
+
   return (
     <section
       className={[
-        "rounded-xl border border-[color:var(--color-kumo-border)]",
-        "bg-[color:var(--color-kumo-background)]",
-        "shadow-[0_1px_2px_color-mix(in_oklch,var(--color-kumo-foreground)_4%,transparent),0_12px_40px_color-mix(in_oklch,var(--color-kumo-foreground)_6%,transparent)]",
-        "space-y-6 p-6 sm:p-8",
+        "border-kumo-line bg-kumo-base mx-auto flex w-full max-w-md flex-col gap-5 rounded-xl border",
+        "shadow-[0_1px_2px_color-mix(in_oklch,var(--color-kumo-default)_4%,transparent),0_12px_40px_color-mix(in_oklch,var(--color-kumo-default)_6%,transparent)]",
+        "p-6 sm:p-8",
         className,
-      ].join(" ")}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <header className="space-y-1.5 text-center">
-        <h1 className="m-0 text-xl font-semibold tracking-tight text-[color:var(--color-kumo-foreground)]">
+      <header className="flex flex-col gap-1.5 text-center">
+        <h1 className="text-kumo-default m-0 text-xl font-semibold tracking-tight">
           {title}
         </h1>
         {description ? (
-          <p className="m-0 text-sm leading-relaxed text-balance text-[color:var(--color-kumo-foreground-100)]">
+          <p className="text-kumo-subtle m-0 text-sm leading-relaxed text-balance">
             {description}
           </p>
         ) : null}

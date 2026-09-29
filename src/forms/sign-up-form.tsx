@@ -255,7 +255,7 @@ export function SignUpForm({
         title={verifyEmailTitle}
         description={verifyEmailDescription}
       >
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <AuthError message={error} className={errorClassName} />
           <p className="text-sm text-kumo-subtle">
             Sent to{" "}
@@ -291,7 +291,7 @@ export function SignUpForm({
 
   return (
     <AuthCard className={className} title={title} description={description}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {providers !== undefined && providers.length > 0 ? (
@@ -300,7 +300,7 @@ export function SignUpForm({
               providers={providers}
               onSelect={handleProviderSelect}
               isSubmitting={isSubmitting}
-              className="space-y-2"
+              className="flex flex-col gap-2"
               providerButtonClassName="w-full"
             />
             <AuthDivider label={dividerLabel} />

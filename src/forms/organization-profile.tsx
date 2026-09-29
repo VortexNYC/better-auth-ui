@@ -161,7 +161,7 @@ export function OrganizationProfile({
 
   if (isLoading) {
     return (
-      <AuthCard className={className} title={title} description={description}>
+      <AuthCard variant="settings" className={className} title={title} description={description}>
         <Text variant="secondary">Loading…</Text>
       </AuthCard>
     );
@@ -169,7 +169,7 @@ export function OrganizationProfile({
 
   if (organization === null) {
     return (
-      <AuthCard className={className} title={title} description={description}>
+      <AuthCard variant="settings" className={className} title={title} description={description}>
         <AuthError message={error} className={errorClassName} />
         <Text variant="secondary">No active workspace found.</Text>
       </AuthCard>
@@ -177,8 +177,8 @@ export function OrganizationProfile({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         <Input

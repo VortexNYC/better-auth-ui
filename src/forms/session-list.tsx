@@ -179,8 +179,8 @@ export function SessionList({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {showRevokeOthersAction && otherSessionCount > 0 ? (
@@ -199,7 +199,7 @@ export function SessionList({
         ) : sessions === null || sessions.length === 0 ? (
           <Text variant="secondary">{emptyLabel}</Text>
         ) : (
-          <ul className="space-y-3">
+          <ul className="flex flex-col gap-3">
             {sessions.map((session) => {
               const isCurrent = session.token === currentSessionToken;
               return (

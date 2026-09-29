@@ -171,8 +171,8 @@ export function OrganizationList({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {isLoading ? (
@@ -186,7 +186,7 @@ export function OrganizationList({
               {organizations === null || organizations.length === 0 ? (
                 <Text variant="secondary">{noOrganizationsLabel}</Text>
               ) : (
-                <ul className="space-y-2">
+                <ul className="flex flex-col gap-2">
                   {organizations.map((organization) => {
                     const isCurrent = organization.id === currentOrganizationId;
                     return (
@@ -220,7 +220,7 @@ export function OrganizationList({
                 <Text as="h3" variant="heading">
                   {invitationsLabel}
                 </Text>
-                <ul className="space-y-2">
+                <ul className="flex flex-col gap-2">
                   {invitations.map((invitation) => (
                     <li
                       key={invitation.id}

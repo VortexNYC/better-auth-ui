@@ -97,8 +97,8 @@ export function InviteMemberForm({
   }
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         <Input
@@ -285,7 +285,7 @@ export function OrganizationMembers({
 
   if (isLoading) {
     return (
-      <AuthCard className={className} title={title} description={description}>
+      <AuthCard variant="settings" className={className} title={title} description={description}>
         <Text variant="secondary">{loadingLabel}</Text>
       </AuthCard>
     );
@@ -295,8 +295,8 @@ export function OrganizationMembers({
   const invitations = fullOrg?.invitations ?? [];
 
   return (
-    <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+    <AuthCard variant="settings" className={className} title={title} description={description}>
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         <div>
@@ -306,7 +306,7 @@ export function OrganizationMembers({
           {members.length === 0 ? (
             <Text variant="secondary">{emptyLabel}</Text>
           ) : (
-            <ul className="space-y-2">
+            <ul className="flex flex-col gap-2">
               {members.map((member) => {
                 const isCurrentUser = member.user?.id === currentUserId;
                 return (
@@ -379,7 +379,7 @@ export function OrganizationMembers({
             <Text as="h3" variant="heading">
               {invitationsLabel}
             </Text>
-            <ul className="space-y-2">
+            <ul className="flex flex-col gap-2">
               {invitations.map((invitation) => (
                 <li
                   key={invitation.id}

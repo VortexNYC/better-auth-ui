@@ -142,7 +142,7 @@ export function VerifyEmailForm({
 
   return (
     <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {status === "verifying" ? (
@@ -158,7 +158,7 @@ export function VerifyEmailForm({
         ) : null}
 
         {status === "error" || !token ? (
-          <form onSubmit={handleSend} className="space-y-4">
+          <form onSubmit={handleSend} className="flex flex-col gap-4">
             <AuthError message={sendError} className={errorClassName} />
 
             {sendSuccess ? (

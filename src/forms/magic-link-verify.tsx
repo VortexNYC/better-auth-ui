@@ -107,7 +107,7 @@ export function MagicLinkVerify({
 
   return (
     <AuthCard className={className} title={title} description={description}>
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
         {status === "verifying" ? (
