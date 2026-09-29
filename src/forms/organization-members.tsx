@@ -6,13 +6,17 @@ import { Text } from "@cloudflare/kumo/components/text";
 
 import { AuthCard, AuthError } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
+import {
+  ORGANIZATION_ADMIN_ROLES,
+  ORGANIZATION_INVITE_ROLE_OPTIONS,
+} from "../organization-role";
 import type {
   AuthInvitation,
   AuthMember,
   AuthOrganizationFull,
 } from "../types";
 
-const defaultRoleOptions = ["owner", "admin", "member"];
+const memberRoleOptions = [...ORGANIZATION_ADMIN_ROLES, "member"] as const;
 
 export interface InviteMemberFormProps {
   className?: string;
@@ -25,6 +29,8 @@ export interface InviteMemberFormProps {
   submittingLabel?: string;
   roleOptions?: readonly string[];
   defaultRole?: string;
+  /** Disable fields/submit (non-admin host, plan gate, etc.). */
+  disabled?: boolean;
   onInvite?: (invitation: AuthInvitation) => void;
 }
 
@@ -40,8 +46,9 @@ export function InviteMemberForm({
   roleLabel = "Role",
   submitLabel = "Send invite",
   submittingLabel = "Sending…",
-  roleOptions = defaultRoleOptions,
+  roleOptions = ORGANIZATION_INVITE_ROLE_OPTIONS,
   defaultRole = "member",
+  disabled = false,
   onInvite,
 }: InviteMemberFormProps) {
   const client = useAuth();
@@ -54,6 +61,10 @@ export function InviteMemberForm({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    if (disabled) {
+      return;
+    }
 
     if (client.organization?.inviteMember === undefined) {
       setError("Inviting members is not available.");
@@ -97,6 +108,7 @@ export function InviteMemberForm({
           onValueChange={setEmail}
           placeholder="teammate@example.com"
           required
+          disabled={disabled}
         />
 
         <Select
@@ -104,6 +116,7 @@ export function InviteMemberForm({
           value={role}
           onValueChange={(value) => setRole(value ?? defaultRole)}
           items={Object.fromEntries(roleOptions.map((r) => [r, r]))}
+          disabled={disabled}
         />
 
         <Button
@@ -111,6 +124,7 @@ export function InviteMemberForm({
           variant="primary"
           className="w-full"
           loading={isSubmitting}
+          disabled={disabled}
         >
           {isSubmitting ? submittingLabel : submitLabel}
         </Button>
@@ -155,8 +169,9 @@ export function OrganizationMembers({
   removeLabel = "Remove",
   cancelLabel = "Cancel",
   updateRoleLabel = "Update role",
-  roleOptions = defaultRoleOptions,
-  canManageMembers = true,
+  roleOptions = memberRoleOptions,
+  // Opt-in: host must pass true for owner/admin (Seal Team settings does).
+  canManageMembers = false,
   onMemberRemoved,
   onInvitationCancelled,
 }: OrganizationMembersProps) {

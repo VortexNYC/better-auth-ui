@@ -79,6 +79,16 @@ export {
   type InviteMemberFormProps,
 } from "./forms/organization-members";
 export {
+  isOrganizationAdminRole,
+  ORGANIZATION_ADMIN_ROLES,
+  ORGANIZATION_INVITE_ROLE_OPTIONS,
+  type OrganizationAdminRole,
+} from "./organization-role";
+export {
+  OrganizationAdminGate,
+  type OrganizationAdminGateProps,
+} from "./organization-admin-gate";
+export {
   AcceptInviteScreen,
   type AcceptInviteScreenProps,
 } from "./forms/accept-invite-screen";

@@ -71,7 +71,7 @@ describe("OrganizationMembers", () => {
       }),
     } as unknown as AnyAuthClient;
 
-    renderWithAuth(<OrganizationMembers />, client);
+    renderWithAuth(<OrganizationMembers canManageMembers />, client);
 
     expect(await screen.findByText("Ada")).toBeDefined();
 
@@ -81,5 +81,40 @@ describe("OrganizationMembers", () => {
     expect(removeMember).toHaveBeenCalledWith({
       memberIdOrEmail: "ada@example.com",
     });
+  });
+
+  it("hides remove controls when canManageMembers is false", async () => {
+    const getFullOrganization = vi.fn().mockResolvedValue({
+      data: {
+        id: "org_1",
+        name: "Acme",
+        slug: "acme",
+        members: [
+          {
+            id: "mem_1",
+            organizationId: "org_1",
+            userId: "u1",
+            role: "member",
+            user: { id: "u1", email: "ada@example.com", name: "Ada" },
+          },
+        ],
+        invitations: [],
+      },
+      error: null,
+    });
+
+    const client = {
+      organization: { getFullOrganization },
+      useSession: vi.fn().mockReturnValue({
+        data: { user: { id: "u2" } },
+        isPending: false,
+      }),
+    } as unknown as AnyAuthClient;
+
+    renderWithAuth(<OrganizationMembers />, client);
+
+    expect(await screen.findByText("Ada")).toBeDefined();
+    expect(screen.getByText("member")).toBeDefined();
+    expect(screen.queryByRole("button", { name: "Remove" })).toBeNull();
   });
 });
