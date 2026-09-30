@@ -97,7 +97,12 @@ export function InviteMemberForm({
   }
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
@@ -285,7 +290,12 @@ export function OrganizationMembers({
 
   if (isLoading) {
     return (
-      <AuthCard variant="settings" className={className} title={title} description={description}>
+      <AuthCard
+        variant="settings"
+        className={className}
+        title={title}
+        description={description}
+      >
         <Text variant="secondary">{loadingLabel}</Text>
       </AuthCard>
     );
@@ -295,7 +305,12 @@ export function OrganizationMembers({
   const invitations = fullOrg?.invitations ?? [];
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 

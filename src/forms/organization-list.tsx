@@ -171,7 +171,12 @@ export function OrganizationList({
   }
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       <div className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 

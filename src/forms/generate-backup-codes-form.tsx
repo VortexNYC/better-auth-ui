@@ -77,7 +77,12 @@ export function GenerateBackupCodesForm({
   }
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       {codes !== null ? (
         <div className="flex flex-col gap-4">
           <Text variant="secondary" size="sm">

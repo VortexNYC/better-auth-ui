@@ -17,12 +17,14 @@ export {
   AuthError,
   AuthProviderButtons,
   AuthSubmitButton,
+  SettingsStack,
   type AuthCardProps,
   type AuthDividerProps,
   type AuthErrorProps,
   type AuthProviderButtonsProps,
   type AuthProviderOption,
   type AuthSubmitButtonProps,
+  type SettingsStackProps,
 } from "./auth-primitives";
 export { SignInForm, type SignInFormProps } from "./forms/sign-in-form";
 export { SignUpForm, type SignUpFormProps } from "./forms/sign-up-form";

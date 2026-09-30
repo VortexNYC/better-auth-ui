@@ -46,9 +46,7 @@ export function EmailLayout({
 
   return (
     <Html>
-      <Head>
-        {fontFaceCss ? <style>{fontFaceCss}</style> : null}
-      </Head>
+      <Head>{fontFaceCss ? <style>{fontFaceCss}</style> : null}</Head>
       {previewText ? <Preview>{previewText}</Preview> : null}
       <Body style={{ backgroundColor: "#f6f7fb", margin: 0, padding: 0 }}>
         <Container

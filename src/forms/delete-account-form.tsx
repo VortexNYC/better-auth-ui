@@ -61,7 +61,12 @@ export function DeleteAccountForm({
 
   if (client.deleteUser === undefined) {
     return (
-      <AuthCard variant="settings" className={className} title={title} description={description}>
+      <AuthCard
+        variant="settings"
+        className={className}
+        title={title}
+        description={description}
+      >
         <AuthError message={unavailableMessage} className={errorClassName} />
       </AuthCard>
     );
@@ -115,14 +120,24 @@ export function DeleteAccountForm({
 
   if (success) {
     return (
-      <AuthCard variant="settings" className={className} title={title} description={description}>
+      <AuthCard
+        variant="settings"
+        className={className}
+        title={title}
+        description={description}
+      >
         <p className="text-center text-sm text-kumo-subtle">{successMessage}</p>
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 

@@ -170,14 +170,20 @@ export function EnableTwoFactorForm({
 
   if (!isAvailable) {
     return (
-      <AuthCard variant="settings" className={className} title={title} description={description}>
+      <AuthCard
+        variant="settings"
+        className={className}
+        title={title}
+        description={description}
+      >
         <AuthError message={unavailableMessage} className={errorClassName} />
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard variant="settings"
+    <AuthCard
+      variant="settings"
       className={className}
       title={header.title}
       description={header.description}

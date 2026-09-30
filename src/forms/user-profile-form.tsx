@@ -83,7 +83,12 @@ export function UserProfileForm({
   }
 
   return (
-    <AuthCard variant="settings" className={className} title={title} description={description}>
+    <AuthCard
+      variant="settings"
+      className={className}
+      title={title}
+      description={description}
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 

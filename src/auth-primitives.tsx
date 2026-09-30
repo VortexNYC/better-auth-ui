@@ -3,7 +3,6 @@ import { WarningCircle } from "@phosphor-icons/react";
 import type { ButtonProps } from "@cloudflare/kumo/components/button";
 import { Button } from "@cloudflare/kumo/components/button";
 import { Banner } from "@cloudflare/kumo/components/banner";
-import { LayerCard } from "@cloudflare/kumo/components/layer-card";
 import { Text } from "@cloudflare/kumo/components/text";
 
 export interface AuthProviderOption {
@@ -32,7 +31,9 @@ export function AuthProviderButtons({
   providerButtonClassName,
 }: AuthProviderButtonsProps) {
   return (
-    <div className={["flex flex-col gap-2", className].filter(Boolean).join(" ")}>
+    <div
+      className={["flex flex-col gap-2", className].filter(Boolean).join(" ")}
+    >
       {providers.map((provider) => (
         <Button
           key={provider.provider}
@@ -80,14 +81,16 @@ export interface AuthCardProps {
   description?: ReactNode;
   /**
    * `auth` — centered standalone card (sign-in / sign-up).
-   * `settings` — left-aligned LayerCard for in-app account/org settings.
+   * `settings` — dense left-aligned section for in-app account/org settings.
+   *              Compose with {@link SettingsStack} for a single hairline surface.
    */
   variant?: "auth" | "settings";
 }
 
 /**
  * Surface for auth + account forms.
- * Auth: single flat card (Clerk/AuthKit shape). Settings: Kumo LayerCard.
+ * Auth: single flat card (Clerk/AuthKit shape).
+ * Settings: dense section — border alone, or a row inside SettingsStack.
  */
 export function AuthCard({
   children,
@@ -98,21 +101,29 @@ export function AuthCard({
 }: AuthCardProps) {
   if (variant === "settings") {
     return (
-      <LayerCard className={className}>
-        <LayerCard.Secondary className="flex flex-col gap-1">
-          <Text as="h2" variant="heading">
+      <section
+        data-baui-settings-card=""
+        className={[
+          "border-kumo-line bg-kumo-base flex w-full flex-col gap-3 rounded-xl border p-4",
+          // Actions hug content — not full-bleed CTA bars in settings.
+          "[&_button[type=submit]]:w-auto [&_button[type=submit]]:self-start",
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <header className="flex flex-col gap-0.5 text-left">
+          <h2 className="text-kumo-default m-0 text-[0.9375rem] leading-snug font-semibold tracking-tight">
             {title}
-          </Text>
+          </h2>
           {description ? (
             <Text as="p" variant="secondary" size="sm">
               {description}
             </Text>
           ) : null}
-        </LayerCard.Secondary>
-        <LayerCard.Primary className="flex flex-col gap-4">
-          {children}
-        </LayerCard.Primary>
-      </LayerCard>
+        </header>
+        <div className="flex flex-col gap-3">{children}</div>
+      </section>
     );
   }
 
@@ -139,6 +150,38 @@ export function AuthCard({
       </header>
       {children}
     </section>
+  );
+}
+
+export interface SettingsStackProps {
+  children: ReactNode;
+  className?: string;
+}
+
+/**
+ * Groups settings AuthCards into one dense surface with hairline dividers.
+ * Direct (or nested) `data-baui-settings-card` children lose solo card chrome.
+ */
+export function SettingsStack({ children, className }: SettingsStackProps) {
+  return (
+    <div
+      data-baui-settings-stack=""
+      className={[
+        "border-kumo-line bg-kumo-base flex w-full max-w-lg flex-col overflow-hidden rounded-xl border",
+        "[&_[data-baui-settings-card]]:rounded-none",
+        "[&_[data-baui-settings-card]]:border-0",
+        "[&_[data-baui-settings-card]]:border-b",
+        "[&_[data-baui-settings-card]]:border-kumo-line",
+        "[&_[data-baui-settings-card]]:bg-transparent",
+        "[&_[data-baui-settings-card]]:shadow-none",
+        "[&_[data-baui-settings-card]:last-child]:border-b-0",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {children}
+    </div>
   );
 }
 
