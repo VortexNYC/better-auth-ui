@@ -18,6 +18,7 @@ describe("AuthCard settings", () => {
     expect(screen.getByText("Your name.")).toBeTruthy();
     expect(card?.querySelector("header")?.className).toContain("text-left");
     expect(card?.className).not.toContain("mx-auto");
+    expect(card?.className).toContain("rounded-xl");
   });
 });
 
@@ -41,12 +42,9 @@ describe("SettingsStack", () => {
 
     const cards = container.querySelectorAll("[data-baui-settings-card]");
     expect(cards).toHaveLength(2);
-    // Parent selectors strip solo chrome from nested cards.
-    expect(stack?.className).toContain(
-      "[&_[data-baui-settings-card]]:rounded-none",
-    );
-    expect(stack?.className).toContain(
-      "[&_[data-baui-settings-card]]:border-b",
-    );
+    // Context drops solo card chrome on each row.
+    expect(cards[0]?.className).toContain("border-b");
+    expect(cards[0]?.className).not.toContain("rounded-xl");
+    expect(cards[0]?.className.split(/\s+/)).not.toContain("border");
   });
 });
