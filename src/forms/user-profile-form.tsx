@@ -17,6 +17,9 @@ export interface UserProfileFormProps {
   submitLabel?: string;
   submittingLabel?: string;
   unavailableMessage?: string;
+  uploadLabel?: string;
+  /** Host uploads the file and returns the URL stored on the user. */
+  onUploadImage?: (file: File) => Promise<string>;
   onSuccess?: () => void;
 }
 
@@ -34,6 +37,8 @@ export function UserProfileForm({
   submitLabel = "Save",
   submittingLabel = "Saving…",
   unavailableMessage = "Profile update is not available.",
+  uploadLabel = "Upload a photo",
+  onUploadImage,
   onSuccess,
 }: UserProfileFormProps) {
   const client = useAuth();
@@ -106,6 +111,36 @@ export function UserProfileForm({
           onValueChange={setImage}
           placeholder={imageUrlPlaceholder}
         />
+
+        {onUploadImage ? (
+          <label className="flex flex-col gap-1 text-sm">
+            {uploadLabel}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                setError(null);
+                setIsSubmitting(true);
+                void onUploadImage(file)
+                  .then((next) => {
+                    setImage(next);
+                  })
+                  .catch((err: unknown) => {
+                    setError(
+                      err instanceof Error
+                        ? err.message
+                        : "Could not upload the photo.",
+                    );
+                  })
+                  .finally(() => {
+                    setIsSubmitting(false);
+                  });
+              }}
+            />
+          </label>
+        ) : null}
 
         <AuthSubmitButton loading={isSubmitting} className="w-full">
           {isSubmitting ? submittingLabel : submitLabel}

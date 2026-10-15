@@ -5,6 +5,7 @@ import { Select } from "@cloudflare/kumo/components/select";
 import { Text } from "@cloudflare/kumo/components/text";
 
 import { AuthCard, AuthError } from "../auth-primitives";
+import { InvitationLinkNotice } from "./invitation-link-notice";
 import { useAuth } from "../auth-provider";
 import {
   ORGANIZATION_ADMIN_ROLES,
@@ -31,6 +32,8 @@ export interface InviteMemberFormProps {
   defaultRole?: string;
   /** Disable fields/submit (non-admin host, plan gate, etc.). */
   disabled?: boolean;
+  /** Build a shareable link from the invitation the server just created. */
+  buildInvitationHref?: (invitation: AuthInvitation) => string;
   onInvite?: (invitation: AuthInvitation) => void;
 }
 
@@ -49,6 +52,7 @@ export function InviteMemberForm({
   roleOptions = ORGANIZATION_INVITE_ROLE_OPTIONS,
   defaultRole = "member",
   disabled = false,
+  buildInvitationHref,
   onInvite,
 }: InviteMemberFormProps) {
   const client = useAuth();
@@ -57,6 +61,7 @@ export function InviteMemberForm({
   const [role, setRole] = useState(defaultRole);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState<AuthInvitation | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -84,7 +89,10 @@ export function InviteMemberForm({
       if (response.error !== null) {
         setError(response.error.message ?? "Could not send invitation.");
       } else {
-        onInvite?.(response.data as AuthInvitation);
+        if (response.data) {
+          onInvite?.(response.data);
+          setSent(response.data);
+        }
         setEmail("");
       }
     } catch (err) {
@@ -123,6 +131,13 @@ export function InviteMemberForm({
           items={Object.fromEntries(roleOptions.map((r) => [r, r]))}
           disabled={disabled}
         />
+
+        {sent && buildInvitationHref ? (
+          <InvitationLinkNotice
+            href={buildInvitationHref(sent)}
+            email={sent.email}
+          />
+        ) : null}
 
         <Button
           type="submit"

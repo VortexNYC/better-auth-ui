@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/emails/index.ts"],
+  entry: ["src/index.ts", "src/emails/index.ts", "src/native/index.ts"],
   format: ["esm"],
   dts: true,
   clean: true,
@@ -13,6 +13,7 @@ export default defineConfig({
     "@cloudflare/kumo",
     "@phosphor-icons/react",
     "react-email",
+    "react-native",
     "zod",
   ],
 });

@@ -1,6 +1,6 @@
 {
   "name": "@vortex-api/better-auth-ui",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "description": "Kumo-based React components for Better Auth",
   "license": "MIT",
   "author": "Shlomo Kabareti <shlomo@vortex.nyc>",
@@ -22,6 +22,11 @@
       "types": "./dist/emails/index.d.ts",
       "import": "./dist/emails/index.js",
       "default": "./dist/emails/index.js"
+    },
+    "./react-native": {
+      "types": "./dist/native/index.d.ts",
+      "import": "./dist/native/index.js",
+      "default": "./dist/native/index.js"
     }
   },
   "scripts": {
@@ -56,10 +61,14 @@
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0",
     "react-email": ">=6.0.0",
+    "react-native": ">=0.76.0",
     "zod": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "react-email": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     }
   },

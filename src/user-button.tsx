@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@cloudflare/kumo/components/button";
 import { DropdownMenu } from "@cloudflare/kumo/components/dropdown";
 
 import { useAuth } from "./auth-provider";
+import type { AuthOrganization } from "./types";
 
 export interface UserButtonProps {
   className?: string;
   redirectTo?: string;
+  currentOrganizationId?: string | null;
+  onOrganizationChange?: (organization: AuthOrganization) => void;
   onSignOut?: () => void;
   onSignOutError?: (message: string) => void;
 }
@@ -20,12 +23,39 @@ export interface UserButtonProps {
 export function UserButton({
   className,
   redirectTo,
+  currentOrganizationId,
+  onOrganizationChange,
   onSignOut,
   onSignOutError,
 }: UserButtonProps) {
   const client = useAuth();
   const session = client.useSession();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [organizations, setOrganizations] = useState<AuthOrganization[]>([]);
+
+  useEffect(() => {
+    if (client.organization?.list === undefined) return;
+    let cancelled = false;
+    void client.organization.list().then((response) => {
+      if (cancelled || response.error !== null) return;
+      setOrganizations(response.data ?? []);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [client]);
+
+  async function handleSwitch(organization: AuthOrganization) {
+    if (client.organization?.setActive === undefined) return;
+    const response = await client.organization.setActive({
+      organizationId: organization.id,
+    });
+    if (response.error !== null) {
+      onSignOutError?.(response.error.message ?? "Could not switch workspace.");
+      return;
+    }
+    onOrganizationChange?.(organization);
+  }
 
   if (session.isPending || !session.data?.user) {
     return null;
@@ -106,6 +136,24 @@ export function UserButton({
 
       <DropdownMenu.Content>
         <DropdownMenu.Label>{user.email}</DropdownMenu.Label>
+        {organizations.length > 0 ? (
+          <>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Label>Workspaces</DropdownMenu.Label>
+            {organizations.map((organization) => (
+              <DropdownMenu.Item
+                key={organization.id}
+                onClick={() => {
+                  void handleSwitch(organization);
+                }}
+              >
+                {organization.id === currentOrganizationId
+                  ? `${organization.name} · current`
+                  : organization.name}
+              </DropdownMenu.Item>
+            ))}
+          </>
+        ) : null}
         <DropdownMenu.Separator />
         <DropdownMenu.Item
           onClick={() => {
