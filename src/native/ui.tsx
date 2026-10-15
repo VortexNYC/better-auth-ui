@@ -80,6 +80,7 @@ export function NativeField({
   placeholder,
   secureTextEntry = false,
   keyboardType = "default",
+  multiline = false,
 }: {
   label: string;
   value: string;
@@ -87,6 +88,7 @@ export function NativeField({
   placeholder?: string;
   secureTextEntry?: boolean;
   keyboardType?: "default" | "email-address" | "number-pad";
+  multiline?: boolean;
 }) {
   const palette = useNativePalette();
   return (
@@ -100,14 +102,16 @@ export function NativeField({
         secureTextEntry={secureTextEntry}
         autoCapitalize="none"
         keyboardType={keyboardType}
+        multiline={multiline}
         style={{
           color: palette.text,
           backgroundColor: palette.surface,
           borderColor: palette.border,
           borderWidth: 1,
           borderRadius: 10,
-          minHeight: 48,
+          minHeight: multiline ? 96 : 48,
           paddingHorizontal: 12,
+          paddingVertical: multiline ? 10 : 0,
           fontSize: 16,
         }}
       />
@@ -150,6 +154,48 @@ export function NativeButton({
           {label}
         </Text>
       )}
+    </Pressable>
+  );
+}
+
+export function NativeToggle({
+  label,
+  checked,
+  disabled = false,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  const palette = useNativePalette();
+  return (
+    <Pressable
+      accessibilityLabel={label}
+      disabled={disabled}
+      onPress={() => {
+        onChange(!checked);
+      }}
+      style={{
+        minHeight: 48,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        opacity: disabled ? 0.6 : 1,
+      }}
+    >
+      <View
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: 6,
+          borderWidth: 1,
+          borderColor: palette.border,
+          backgroundColor: checked ? palette.button : palette.surface,
+        }}
+      />
+      <Text style={{ color: palette.text, fontSize: 16 }}>{label}</Text>
     </Pressable>
   );
 }

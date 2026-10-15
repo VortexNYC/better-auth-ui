@@ -102,6 +102,14 @@ export function brandMetadataValue(
   return Object.keys(value).length > 0 ? value : undefined;
 }
 
+export interface OrganizationAccessValue {
+  allowApiAccess: boolean;
+  ssoEnforced: boolean;
+  /** One CIDR per line. Empty means no limit. */
+  ipAllowlist: string;
+  delegateOwnership: boolean;
+}
+
 export interface OrganizationRegional {
   timezone: string;
   currency: string;

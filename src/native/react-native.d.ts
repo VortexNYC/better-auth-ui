@@ -25,6 +25,7 @@ declare module "react-native" {
     secureTextEntry?: boolean;
     autoCapitalize?: "none" | "sentences" | "words" | "characters";
     keyboardType?: "default" | "email-address" | "number-pad";
+    multiline?: boolean;
     style?: unknown;
   }>;
   export const Pressable: ComponentType<{

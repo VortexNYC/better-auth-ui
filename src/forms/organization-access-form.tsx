@@ -4,13 +4,9 @@ import { Checkbox } from "@cloudflare/kumo/components/checkbox";
 import { Text } from "@cloudflare/kumo/components/text";
 import { Textarea } from "@cloudflare/kumo";
 
-export interface OrganizationAccessValue {
-  allowApiAccess: boolean;
-  ssoEnforced: boolean;
-  /** One CIDR per line. Empty means no limit. */
-  ipAllowlist: string;
-  delegateOwnership: boolean;
-}
+import type { OrganizationAccessValue } from "../lib/organization-metadata";
+
+export type { OrganizationAccessValue } from "../lib/organization-metadata";
 
 export interface OrganizationAccessFormProps {
   value: OrganizationAccessValue;
