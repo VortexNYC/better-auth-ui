@@ -94,8 +94,9 @@ export function OrganizationChooser({
         }
       }
 
-      if (created) {
-        onCreated?.(organization);
+      if (created && onCreated) {
+        onCreated(organization);
+        return;
       }
       onOpen(organization);
     } catch (err) {

@@ -11,6 +11,11 @@ import { UserProfileForm } from "./user-profile-form";
 export interface AccountSettingsProps {
   className?: string;
   currentSessionToken?: string | null;
+  emailCallbackURL?: string;
+  onProfileSaved?: () => void;
+  onEmailChangeRequested?: () => void;
+  onAccountUnlinked?: () => void;
+  onAccountDeleted?: () => void;
 }
 
 /**
@@ -19,17 +24,25 @@ export interface AccountSettingsProps {
 export function AccountSettings({
   className,
   currentSessionToken,
+  emailCallbackURL,
+  onProfileSaved,
+  onEmailChangeRequested,
+  onAccountUnlinked,
+  onAccountDeleted,
 }: AccountSettingsProps) {
   return (
     <SettingsStack className={className}>
-      <UserProfileForm />
-      <ChangeEmailForm />
+      <UserProfileForm onSuccess={onProfileSaved} />
+      <ChangeEmailForm
+        callbackURL={emailCallbackURL}
+        onSuccess={onEmailChangeRequested}
+      />
       <ChangePasswordForm />
       <SessionList currentSessionToken={currentSessionToken} />
       <EnableTwoFactorForm />
       <PasskeyList />
-      <ConnectedAccounts />
-      <DeleteAccountForm />
+      <ConnectedAccounts onUnlinked={onAccountUnlinked} />
+      <DeleteAccountForm onSuccess={onAccountDeleted} />
     </SettingsStack>
   );
 }

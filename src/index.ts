@@ -1,4 +1,9 @@
-export type { AnyAuthClient, AuthFormBaseProps, AuthUser } from "./types";
+export type {
+  AnyAuthClient,
+  AuthFormBaseProps,
+  AuthOrganization,
+  AuthUser,
+} from "./types";
 export { AuthProvider, useAuth, type AuthProviderProps } from "./auth-provider";
 export {
   Authenticated,
