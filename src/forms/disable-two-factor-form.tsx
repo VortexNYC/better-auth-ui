@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
+import { PasswordField } from "./password-field";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
@@ -72,7 +72,7 @@ export function DisableTwoFactorForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
-        <SensitiveInput
+        <PasswordField
           label={passwordLabel}
           value={password}
           onValueChange={setPassword}

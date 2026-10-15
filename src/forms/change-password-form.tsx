@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Checkbox } from "@cloudflare/kumo/components/checkbox";
-import { SensitiveInput } from "@cloudflare/kumo/components/sensitive-input";
+import { PasswordField } from "./password-field";
 
 import { AuthCard, AuthError, AuthSubmitButton } from "../auth-primitives";
 import { useAuth } from "../auth-provider";
@@ -107,7 +107,7 @@ export function ChangePasswordForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AuthError message={error} className={errorClassName} />
 
-        <SensitiveInput
+        <PasswordField
           label={currentPasswordLabel}
           value={currentPassword}
           onValueChange={setCurrentPassword}
@@ -115,7 +115,7 @@ export function ChangePasswordForm({
           required
         />
 
-        <SensitiveInput
+        <PasswordField
           label={newPasswordLabel}
           value={newPassword}
           onValueChange={setNewPassword}
@@ -123,7 +123,7 @@ export function ChangePasswordForm({
           required
         />
 
-        <SensitiveInput
+        <PasswordField
           label={confirmPasswordLabel}
           value={confirmPassword}
           onValueChange={setConfirmPassword}
