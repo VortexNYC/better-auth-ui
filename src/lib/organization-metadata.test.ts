@@ -4,6 +4,7 @@ import {
   brandMetadataValue,
   invitationAcceptHref,
   mergeMetadataKey,
+  mergeOrganizationRegional,
   readOrganizationSecurity,
   securityMetadataValue,
 } from "./organization-metadata";
@@ -44,6 +45,26 @@ describe("organization metadata", () => {
     expect(() =>
       securityMetadataValue({ requireMfa: false, sessionTimeoutMinutes: 5 }),
     ).toThrow(/15/);
+  });
+});
+
+describe("mergeOrganizationRegional", () => {
+  it("sets timezone and currency without dropping security", () => {
+    expect(
+      mergeOrganizationRegional(
+        { security: { requireMfa: true }, timezone: "UTC" },
+        {
+          timezone: "America/New_York",
+          currency: "USD",
+          currencyKind: "normal",
+        },
+      ),
+    ).toEqual({
+      security: { requireMfa: true },
+      timezone: "America/New_York",
+      currency: "USD",
+      currencyKind: "normal",
+    });
   });
 });
 

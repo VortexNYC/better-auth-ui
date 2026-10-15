@@ -1,14 +1,9 @@
 import { SettingsStack } from "../auth-primitives";
+import { AccountSecurity } from "./account-security";
 import { ChangeEmailForm } from "./change-email-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { ConnectedAccounts } from "./connected-accounts";
 import { DeleteAccountForm } from "./delete-account-form";
-import { DisableTwoFactorForm } from "./disable-two-factor-form";
-import { EnableTwoFactorForm } from "./enable-two-factor-form";
-import { GenerateBackupCodesForm } from "./generate-backup-codes-form";
-import { PasskeyList } from "./passkey-list";
-import { SessionList } from "./session-list";
-import { SetPasswordForm } from "./set-password-form";
 import { UserProfileForm } from "./user-profile-form";
 
 export interface AccountSettingsProps {
@@ -17,11 +12,9 @@ export interface AccountSettingsProps {
   emailCallbackURL?: string;
   /** Show the set-password form for accounts that signed in without a password. */
   showSetPassword?: boolean;
-  /**
-   * Sessions, two-factor, and passkeys. Turn off when the host already has a
-   * dedicated security route.
-   */
+  /** Sessions, two-factor, passkeys, and the set-password form. */
   includeSecurityForms?: boolean;
+  issuer?: string;
   onUploadImage?: (file: File) => Promise<string>;
   onProfileSaved?: () => void;
   onEmailChangeRequested?: () => void;
@@ -38,6 +31,7 @@ export function AccountSettings({
   emailCallbackURL,
   showSetPassword = false,
   includeSecurityForms = true,
+  issuer,
   onUploadImage,
   onProfileSaved,
   onEmailChangeRequested,
@@ -54,16 +48,13 @@ export function AccountSettings({
         callbackURL={emailCallbackURL}
         onSuccess={onEmailChangeRequested}
       />
-      <ChangePasswordForm />
-      {showSetPassword ? <SetPasswordForm /> : null}
+      {includeSecurityForms ? null : <ChangePasswordForm />}
       {includeSecurityForms ? (
-        <>
-          <SessionList currentSessionToken={currentSessionToken} />
-          <EnableTwoFactorForm />
-          <DisableTwoFactorForm />
-          <GenerateBackupCodesForm />
-          <PasskeyList />
-        </>
+        <AccountSecurity
+          currentSessionToken={currentSessionToken}
+          showSetPassword={showSetPassword}
+          issuer={issuer}
+        />
       ) : null}
       <ConnectedAccounts onUnlinked={onAccountUnlinked} />
       <DeleteAccountForm onSuccess={onAccountDeleted} />

@@ -102,6 +102,44 @@ export function brandMetadataValue(
   return Object.keys(value).length > 0 ? value : undefined;
 }
 
+export interface OrganizationRegional {
+  timezone: string;
+  currency: string;
+  currencyKind: string;
+}
+
+export function readOrganizationRegional(
+  metadata: Record<string, unknown> | null | undefined,
+  defaults: OrganizationRegional = {
+    timezone: "UTC",
+    currency: "USD",
+    currencyKind: "normal",
+  },
+): OrganizationRegional {
+  const text = (key: keyof OrganizationRegional) =>
+    typeof metadata?.[key] === "string" && metadata[key].length > 0
+      ? metadata[key]
+      : defaults[key];
+  return {
+    timezone: text("timezone"),
+    currency: text("currency"),
+    currencyKind: text("currencyKind"),
+  };
+}
+
+/** Write regional fields and leave security, brand, and every other key in place. */
+export function mergeOrganizationRegional(
+  metadata: Record<string, unknown> | null | undefined,
+  regional: OrganizationRegional,
+): Record<string, unknown> {
+  return {
+    ...(metadata ?? {}),
+    timezone: regional.timezone.trim(),
+    currency: regional.currency.trim(),
+    currencyKind: regional.currencyKind.trim(),
+  };
+}
+
 export function invitationAcceptHref(args: {
   origin: string;
   path: string;

@@ -5,6 +5,13 @@ export type {
   AuthUser,
 } from "./types";
 export { AuthProvider, useAuth, type AuthProviderProps } from "./auth-provider";
+export { AuthShell, type AuthShellProps } from "./auth-shell";
+export {
+  WorkspaceAccountMenu,
+  type WorkspaceAccountMenuProps,
+  type WorkspaceMenuItem,
+  type WorkspaceMenuUser,
+} from "./workspace-account-menu";
 export {
   Authenticated,
   Unauthenticated,
@@ -159,6 +166,10 @@ export {
   type AccountSettingsProps,
 } from "./forms/account-settings";
 export {
+  AccountSecurity,
+  type AccountSecurityProps,
+} from "./forms/account-security";
+export {
   OrganizationSettings,
   type OrganizationSettingsProps,
 } from "./forms/organization-settings";
@@ -195,10 +206,22 @@ export {
   type OrganizationBrandFormProps,
 } from "./forms/organization-brand-form";
 export {
+  OrganizationAccessForm,
+  type OrganizationAccessFormProps,
+  type OrganizationAccessValue,
+} from "./forms/organization-access-form";
+export {
+  OrganizationRegionalForm,
+  type OrganizationRegionalFormProps,
+} from "./forms/organization-regional-form";
+export {
   invitationAcceptHref,
+  mergeOrganizationRegional,
   readOrganizationBrand,
+  readOrganizationRegional,
   readOrganizationSecurity,
   type OrganizationBrand,
+  type OrganizationRegional,
   type OrganizationSecurityPolicy,
 } from "./lib/organization-metadata";
 export {
