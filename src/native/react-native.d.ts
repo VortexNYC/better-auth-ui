@@ -6,7 +6,7 @@ declare module "react-native" {
     style?: unknown;
   }
 
-  export const View: ComponentType<NodeProps>;
+  export const View: ComponentType<NodeProps & { style?: unknown }>;
   export const Text: ComponentType<NodeProps>;
   export const ScrollView: ComponentType<
     NodeProps & { contentContainerStyle?: unknown }

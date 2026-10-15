@@ -17,6 +17,8 @@ export interface WebhookEndpointRecord {
   url: string;
   events: readonly string[];
   status: string;
+  secretPrefix?: string;
+  createdAt?: string | null;
 }
 
 export interface WebhookDeliveryRecord {
@@ -39,6 +41,8 @@ export interface WebhookManagerProps {
   eventOptions: readonly string[];
   canManage?: boolean;
   pageSize?: number;
+  /** Hide the delivery table when the host has no delivery query on this screen. */
+  showDeliveries?: boolean;
   onCreate: (input: {
     name: string;
     url: string;
@@ -57,6 +61,7 @@ export function WebhookManager({
   eventOptions,
   canManage = true,
   pageSize = 25,
+  showDeliveries = true,
   onCreate,
   onDelete,
 }: WebhookManagerProps) {
@@ -187,16 +192,21 @@ export function WebhookManager({
                 <Table.Head>URL</Table.Head>
                 <Table.Head>Events</Table.Head>
                 <Table.Head>Status</Table.Head>
+                <Table.Head>Created</Table.Head>
                 <Table.Head>Actions</Table.Head>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {endpoints.map((endpoint) => (
                 <Table.Row key={endpoint.id}>
-                  <Table.Cell>{endpoint.name}</Table.Cell>
+                  <Table.Cell>
+                    {endpoint.name}
+                    {endpoint.secretPrefix ? ` · ${endpoint.secretPrefix}` : ""}
+                  </Table.Cell>
                   <Table.Cell>{endpoint.url}</Table.Cell>
                   <Table.Cell>{endpoint.events.join(", ")}</Table.Cell>
                   <Table.Cell>{endpoint.status}</Table.Cell>
+                  <Table.Cell>{endpoint.createdAt ?? "—"}</Table.Cell>
                   <Table.Cell>
                     <Button
                       type="button"
@@ -222,82 +232,84 @@ export function WebhookManager({
           </Table>
         )}
       </section>
-      <section className="flex flex-col gap-3">
-        <Text as="h2" variant="heading">
-          Deliveries
-        </Text>
-        <Select
-          aria-label="Delivery status"
-          value={statusFilter}
-          onValueChange={(value) => {
-            if (value) {
-              setStatusFilter(value);
-              setPage(1);
-            }
-          }}
-          items={Object.fromEntries(statuses.map((item) => [item, item]))}
-        />
-        {window.items.length === 0 ? (
-          <Empty
-            title={
-              statusFilter === "exhausted"
-                ? "No exhausted deliveries"
-                : "No deliveries"
-            }
-            description="Nothing matches this filter."
+      {showDeliveries ? (
+        <section className="flex flex-col gap-3">
+          <Text as="h2" variant="heading">
+            Deliveries
+          </Text>
+          <Select
+            aria-label="Delivery status"
+            value={statusFilter}
+            onValueChange={(value) => {
+              if (value) {
+                setStatusFilter(value);
+                setPage(1);
+              }
+            }}
+            items={Object.fromEntries(statuses.map((item) => [item, item]))}
           />
-        ) : (
-          <Table>
-            <Table.Header>
-              <Table.Row>
-                <Table.Head>Event</Table.Head>
-                <Table.Head>Status</Table.Head>
-                <Table.Head>When</Table.Head>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {window.items.map((delivery) => (
-                <Table.Row key={delivery.id}>
-                  <Table.Cell>{delivery.event}</Table.Cell>
-                  <Table.Cell>
-                    {delivery.exhausted ? "exhausted" : delivery.status}
-                  </Table.Cell>
-                  <Table.Cell>{delivery.createdAt ?? "—"}</Table.Cell>
+          {window.items.length === 0 ? (
+            <Empty
+              title={
+                statusFilter === "exhausted"
+                  ? "No exhausted deliveries"
+                  : "No deliveries"
+              }
+              description="Nothing matches this filter."
+            />
+          ) : (
+            <Table>
+              <Table.Header>
+                <Table.Row>
+                  <Table.Head>Event</Table.Head>
+                  <Table.Head>Status</Table.Head>
+                  <Table.Head>When</Table.Head>
                 </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        )}
-        {window.pages > 1 ? (
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={window.page <= 1}
-              onClick={() => {
-                setPage(window.page - 1);
-              }}
-            >
-              Previous
-            </Button>
-            <Text as="span" variant="secondary" size="sm">
-              {window.page} / {window.pages}
-            </Text>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={window.page >= window.pages}
-              onClick={() => {
-                setPage(window.page + 1);
-              }}
-            >
-              Next
-            </Button>
-          </div>
-        ) : null}
-      </section>
+              </Table.Header>
+              <Table.Body>
+                {window.items.map((delivery) => (
+                  <Table.Row key={delivery.id}>
+                    <Table.Cell>{delivery.event}</Table.Cell>
+                    <Table.Cell>
+                      {delivery.exhausted ? "exhausted" : delivery.status}
+                    </Table.Cell>
+                    <Table.Cell>{delivery.createdAt ?? "—"}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          )}
+          {window.pages > 1 ? (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={window.page <= 1}
+                onClick={() => {
+                  setPage(window.page - 1);
+                }}
+              >
+                Previous
+              </Button>
+              <Text as="span" variant="secondary" size="sm">
+                {window.page} / {window.pages}
+              </Text>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={window.page >= window.pages}
+                onClick={() => {
+                  setPage(window.page + 1);
+                }}
+              >
+                Next
+              </Button>
+            </div>
+          ) : null}
+        </section>
+      ) : null}
     </div>
   );
 }

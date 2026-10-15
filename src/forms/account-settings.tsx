@@ -17,6 +17,11 @@ export interface AccountSettingsProps {
   emailCallbackURL?: string;
   /** Show the set-password form for accounts that signed in without a password. */
   showSetPassword?: boolean;
+  /**
+   * Sessions, two-factor, and passkeys. Turn off when the host already has a
+   * dedicated security route.
+   */
+  includeSecurityForms?: boolean;
   onUploadImage?: (file: File) => Promise<string>;
   onProfileSaved?: () => void;
   onEmailChangeRequested?: () => void;
@@ -32,6 +37,7 @@ export function AccountSettings({
   currentSessionToken,
   emailCallbackURL,
   showSetPassword = false,
+  includeSecurityForms = true,
   onUploadImage,
   onProfileSaved,
   onEmailChangeRequested,
@@ -50,11 +56,15 @@ export function AccountSettings({
       />
       <ChangePasswordForm />
       {showSetPassword ? <SetPasswordForm /> : null}
-      <SessionList currentSessionToken={currentSessionToken} />
-      <EnableTwoFactorForm />
-      <DisableTwoFactorForm />
-      <GenerateBackupCodesForm />
-      <PasskeyList />
+      {includeSecurityForms ? (
+        <>
+          <SessionList currentSessionToken={currentSessionToken} />
+          <EnableTwoFactorForm />
+          <DisableTwoFactorForm />
+          <GenerateBackupCodesForm />
+          <PasskeyList />
+        </>
+      ) : null}
       <ConnectedAccounts onUnlinked={onAccountUnlinked} />
       <DeleteAccountForm onSuccess={onAccountDeleted} />
     </SettingsStack>
