@@ -175,6 +175,7 @@ export {
 } from "./forms/organization-settings";
 export {
   ApiKeyManager,
+  parseApiKeyAllowedIpRanges,
   type ApiKeyManagerProps,
   type ApiKeyRecord,
   type ApiKeyCreatedSecret,

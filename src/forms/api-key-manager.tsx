@@ -7,6 +7,7 @@ import { Empty } from "@cloudflare/kumo/components/empty";
 import { Input } from "@cloudflare/kumo/components/input";
 import { Table } from "@cloudflare/kumo/components/table";
 import { Text } from "@cloudflare/kumo/components/text";
+import { Textarea } from "@cloudflare/kumo";
 
 import { AuthError } from "../auth-primitives";
 
@@ -15,6 +16,8 @@ export interface ApiKeyRecord {
   name: string;
   publicId?: string;
   scopes: readonly string[];
+  /** Empty means the key is not limited to an IP range. */
+  allowedIpRanges?: readonly string[];
   createdAt?: string | null;
   lastUsedAt?: string | null;
   revokedAt?: string | null;
@@ -33,9 +36,18 @@ export interface ApiKeyManagerProps {
   onCreate: (input: {
     name: string;
     scopes: string[];
+    allowedIpRanges: string[];
   }) => Promise<ApiKeyCreatedSecret>;
   onRevoke: (id: string) => Promise<void>;
   formatTimestamp?: (value: string | null | undefined) => string;
+}
+
+/** One range per line or comma. Blank lines are dropped. */
+export function parseApiKeyAllowedIpRanges(value: string): string[] {
+  return value
+    .split(/\n|,/)
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
 }
 
 function formatTimestamp(value: string | null | undefined): string {
@@ -62,6 +74,7 @@ export function ApiKeyManager({
   const [scopes, setScopes] = useState<string[]>(
     scopeOptions[0] ? [scopeOptions[0]] : [],
   );
+  const [ipRanges, setIpRanges] = useState("");
   const [created, setCreated] = useState<ApiKeyCreatedSecret | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -72,9 +85,14 @@ export function ApiKeyManager({
     setPending(true);
     setError(null);
     try {
-      const secret = await onCreate({ name: name.trim(), scopes });
+      const secret = await onCreate({
+        name: name.trim(),
+        scopes,
+        allowedIpRanges: parseApiKeyAllowedIpRanges(ipRanges),
+      });
       setCreated(secret);
       setName("");
+      setIpRanges("");
       setScopes(scopeOptions[0] ? [scopeOptions[0]] : []);
       setOpen(false);
     } catch (err) {
@@ -112,6 +130,7 @@ export function ApiKeyManager({
               <Table.Head>Name</Table.Head>
               <Table.Head>Public ID</Table.Head>
               <Table.Head>Scopes</Table.Head>
+              <Table.Head>Allowed IPs</Table.Head>
               <Table.Head>Created</Table.Head>
               <Table.Head>Last used</Table.Head>
               <Table.Head>Actions</Table.Head>
@@ -123,6 +142,11 @@ export function ApiKeyManager({
                 <Table.Cell>{key.name}</Table.Cell>
                 <Table.Cell>{key.publicId ?? "—"}</Table.Cell>
                 <Table.Cell>{key.scopes.join(", ")}</Table.Cell>
+                <Table.Cell>
+                  {key.allowedIpRanges && key.allowedIpRanges.length > 0
+                    ? key.allowedIpRanges.join(", ")
+                    : "Any"}
+                </Table.Cell>
                 <Table.Cell>{format(key.createdAt)}</Table.Cell>
                 <Table.Cell>{format(key.lastUsedAt)}</Table.Cell>
                 <Table.Cell>
@@ -177,6 +201,20 @@ export function ApiKeyManager({
                   }}
                 />
               ))}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Text as="span" variant="secondary" size="sm">
+                Allowed IP ranges
+              </Text>
+              <Textarea
+                aria-label="Allowed IP ranges"
+                rows={3}
+                value={ipRanges}
+                placeholder={"One CIDR per line. Empty means any address."}
+                onChange={(event) => {
+                  setIpRanges(event.target.value);
+                }}
+              />
             </div>
             <div className="flex justify-end gap-2">
               <Button
