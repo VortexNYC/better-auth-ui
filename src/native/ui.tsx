@@ -24,25 +24,25 @@ export function useNativePalette(): NativePalette {
   const scheme = useColorScheme();
   if (scheme === "dark") {
     return {
-      background: "#111111",
-      surface: "#1c1c1c",
-      text: "#f5f5f2",
-      muted: "#a3a39d",
-      border: "#2e2e2e",
-      button: "#f5f5f2",
-      buttonText: "#111111",
+      background: "#17130e",
+      surface: "#2c271f",
+      text: "#f5f3f0",
+      muted: "#aa9e8d",
+      border: "#40382d",
+      button: "#f5f3f0",
+      buttonText: "#17130e",
       danger: "#f2b8b5",
     };
   }
   return {
-    background: "#f7f7f5",
+    background: "#fbfaf9",
     surface: "#ffffff",
-    text: "#1a1a1a",
-    muted: "#5c5c56",
-    border: "#e4e4e0",
-    button: "#1a1a1a",
-    buttonText: "#ffffff",
-    danger: "#9f2d2a",
+    text: "#2c271f",
+    muted: "#867865",
+    border: "#e7e2dc",
+    button: "#2c271f",
+    buttonText: "#fbfaf9",
+    danger: "#dc2626",
   };
 }
 

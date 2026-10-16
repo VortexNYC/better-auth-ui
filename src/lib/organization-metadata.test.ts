@@ -49,6 +49,24 @@ describe("organization metadata", () => {
 });
 
 describe("mergeOrganizationRegional", () => {
+  it("parses a JSON string before writing timezone", () => {
+    expect(
+      mergeOrganizationRegional(
+        '{"vortexConnect":{"merchantAccountId":"ma_1"}}',
+        {
+          timezone: "America/New_York",
+          currency: "BRL",
+          currencyKind: "normal",
+        },
+      ),
+    ).toEqual({
+      vortexConnect: { merchantAccountId: "ma_1" },
+      timezone: "America/New_York",
+      currency: "BRL",
+      currencyKind: "normal",
+    });
+  });
+
   it("sets timezone and currency without dropping security", () => {
     expect(
       mergeOrganizationRegional(

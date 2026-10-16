@@ -27,25 +27,25 @@ export function WelcomeEmail({
     <EmailLayout previewText={previewText} {...layoutProps}>
       <Heading
         as="h1"
-        style={{ color: "#111827", fontSize: "24px", fontWeight: 700 }}
+        style={{ color: "#2c271f", fontSize: "24px", fontWeight: 700 }}
       >
         {heading}
       </Heading>
 
       {username ? (
-        <Text style={{ color: "#374151", fontSize: "16px" }}>
+        <Text style={{ color: "#554b3e", fontSize: "16px" }}>
           Hi {username},
         </Text>
       ) : null}
 
-      <Text style={{ color: "#374151", fontSize: "16px", lineHeight: "1.5" }}>
+      <Text style={{ color: "#554b3e", fontSize: "16px", lineHeight: "1.5" }}>
         {message}
       </Text>
 
       <Button
         href={getStartedUrl}
         style={{
-          backgroundColor: layoutProps.brandColor ?? "#0052cc",
+          backgroundColor: layoutProps.brandColor ?? "#2c271f",
           color: "#ffffff",
           borderRadius: "6px",
           padding: "12px 24px",

@@ -110,7 +110,7 @@ export function OrganizationBrandForm({
           label="Primary color"
           value={brand.primaryColor}
           disabled={disabled}
-          placeholder="#111111"
+          placeholder="#2c271f"
           onValueChange={(value) => {
             setField("primaryColor", value);
           }}
@@ -119,7 +119,7 @@ export function OrganizationBrandForm({
           label="Accent color"
           value={brand.accentColor}
           disabled={disabled}
-          placeholder="#0052cc"
+          placeholder="#867865"
           onValueChange={(value) => {
             setField("accentColor", value);
           }}

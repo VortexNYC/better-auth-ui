@@ -1,0 +1,21 @@
+/*
+ * Kumo text utilities read --text-color-kumo-*. Those stay on Cloudflare's
+ * cool gray, orange, and blue after a host rebinds --color-kumo-*.
+ * Point the text tokens at the host color tokens, and the page canvas at
+ * the host base, so shared screens follow the product palette.
+ *
+ * Import this after `@cloudflare/kumo/styles`, and only in apps that set
+ * --kumo-* or --color-kumo-* (Seal does). An app that leaves both unset
+ * should not import this file.
+ */
+:root {
+  --text-color-kumo-default: var(--color-kumo-default, var(--kumo-default));
+  --text-color-kumo-strong: var(--color-kumo-default, var(--kumo-default));
+  --text-color-kumo-subtle: var(--color-kumo-subtle, var(--kumo-subtle));
+  --text-color-kumo-placeholder: var(--color-kumo-subtle, var(--kumo-subtle));
+  --text-color-kumo-inactive: var(--color-kumo-subtle, var(--kumo-subtle));
+  --text-color-kumo-brand: var(--color-kumo-brand, var(--kumo-brand));
+  --text-color-kumo-link: var(--color-kumo-link, var(--kumo-link));
+  --text-color-kumo-info: var(--color-kumo-info, var(--kumo-info));
+  --color-kumo-canvas: var(--kumo-base, var(--color-kumo-base));
+}

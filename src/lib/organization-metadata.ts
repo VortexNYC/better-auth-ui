@@ -21,10 +21,25 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/** Better Auth returns organization metadata as a JSON string. Spreading that string writes one key per character. */
+export function organizationMetadataRecord(
+  metadata: unknown,
+): Record<string, unknown> {
+  if (typeof metadata === "string") {
+    try {
+      const parsed: unknown = JSON.parse(metadata);
+      return isRecord(parsed) ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+  return isRecord(metadata) ? metadata : {};
+}
+
 export function readOrganizationSecurity(
-  metadata: Record<string, unknown> | null | undefined,
+  metadata: unknown,
 ): OrganizationSecurityPolicy {
-  const raw = metadata?.[ORGANIZATION_SECURITY_KEY];
+  const raw = organizationMetadataRecord(metadata)[ORGANIZATION_SECURITY_KEY];
   if (!isRecord(raw)) {
     return { requireMfa: false, sessionTimeoutMinutes: null };
   }
@@ -41,10 +56,8 @@ export function readOrganizationSecurity(
   };
 }
 
-export function readOrganizationBrand(
-  metadata: Record<string, unknown> | null | undefined,
-): OrganizationBrand {
-  const raw = metadata?.[ORGANIZATION_BRAND_KEY];
+export function readOrganizationBrand(metadata: unknown): OrganizationBrand {
+  const raw = organizationMetadataRecord(metadata)[ORGANIZATION_BRAND_KEY];
   const record = isRecord(raw) ? raw : {};
   const text = (key: string) =>
     typeof record[key] === "string" ? record[key] : "";
@@ -59,11 +72,11 @@ export function readOrganizationBrand(
 
 /** Patch one metadata key and leave every other key, including product fields, in place. */
 export function mergeMetadataKey(
-  metadata: Record<string, unknown> | null | undefined,
+  metadata: unknown,
   key: string,
   value: Record<string, unknown> | undefined,
 ): Record<string, unknown> {
-  const next = { ...(metadata ?? {}) };
+  const next = { ...organizationMetadataRecord(metadata) };
   if (value === undefined || Object.keys(value).length === 0) {
     delete next[key];
   } else {
@@ -117,16 +130,17 @@ export interface OrganizationRegional {
 }
 
 export function readOrganizationRegional(
-  metadata: Record<string, unknown> | null | undefined,
+  metadata: unknown,
   defaults: OrganizationRegional = {
     timezone: "UTC",
     currency: "USD",
     currencyKind: "normal",
   },
 ): OrganizationRegional {
+  const record = organizationMetadataRecord(metadata);
   const text = (key: keyof OrganizationRegional) =>
-    typeof metadata?.[key] === "string" && metadata[key].length > 0
-      ? metadata[key]
+    typeof record[key] === "string" && record[key].length > 0
+      ? record[key]
       : defaults[key];
   return {
     timezone: text("timezone"),
@@ -137,11 +151,11 @@ export function readOrganizationRegional(
 
 /** Write regional fields and leave security, brand, and every other key in place. */
 export function mergeOrganizationRegional(
-  metadata: Record<string, unknown> | null | undefined,
+  metadata: unknown,
   regional: OrganizationRegional,
 ): Record<string, unknown> {
   return {
-    ...(metadata ?? {}),
+    ...organizationMetadataRecord(metadata),
     timezone: regional.timezone.trim(),
     currency: regional.currency.trim(),
     currencyKind: regional.currencyKind.trim(),

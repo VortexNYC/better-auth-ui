@@ -33,9 +33,16 @@ const authClient = createAuthClient({
 ## Theming
 
 Forms use Kumo components and `text-kumo-*` / `border-kumo-*` utilities. Import
-Kumo styles in the consumer app (for example `@cloudflare/kumo/styles`) so those
-tokens resolve. Pair with your product theme — Seal maps the same names onto
-Taupe in `@seal/tokens`.
+Kumo styles, then this package's theme bridge, so text and the page canvas
+follow the host palette instead of Cloudflare gray, blue, and orange:
+
+```css
+@import "@cloudflare/kumo/styles";
+@import "@vortex-api/better-auth-ui/theme.css";
+```
+
+Import `theme.css` only when the app sets `--kumo-*` or `--color-kumo-*`.
+Seal maps those names onto Taupe in `@seal/tokens`.
 
 ## Email templates
 

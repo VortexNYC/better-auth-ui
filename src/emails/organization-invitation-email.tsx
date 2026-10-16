@@ -31,19 +31,19 @@ export function OrganizationInvitationEmail({
     <EmailLayout previewText={previewText} {...layoutProps}>
       <Heading
         as="h1"
-        style={{ color: "#111827", fontSize: "24px", fontWeight: 700 }}
+        style={{ color: "#2c271f", fontSize: "24px", fontWeight: 700 }}
       >
         {heading}
       </Heading>
 
-      <Text style={{ color: "#374151", fontSize: "16px", lineHeight: "1.5" }}>
+      <Text style={{ color: "#554b3e", fontSize: "16px", lineHeight: "1.5" }}>
         {message}
       </Text>
 
       <Button
         href={acceptUrl}
         style={{
-          backgroundColor: layoutProps.brandColor ?? "#0052cc",
+          backgroundColor: layoutProps.brandColor ?? "#2c271f",
           color: "#ffffff",
           borderRadius: "6px",
           padding: "12px 24px",
@@ -58,12 +58,12 @@ export function OrganizationInvitationEmail({
         {buttonText}
       </Button>
 
-      <Text style={{ color: "#6b7280", fontSize: "14px", lineHeight: "1.5" }}>
+      <Text style={{ color: "#867865", fontSize: "14px", lineHeight: "1.5" }}>
         {fallbackMessage}
         <br />
         <a
           href={acceptUrl}
-          style={{ color: layoutProps.brandColor ?? "#0052cc" }}
+          style={{ color: layoutProps.brandColor ?? "#2c271f" }}
         >
           {acceptUrl}
         </a>

@@ -247,8 +247,8 @@ const BRAND_FIELDS: ReadonlyArray<{
   label: string;
   placeholder?: string;
 }> = [
-  { key: "primaryColor", label: "Primary color", placeholder: "#111111" },
-  { key: "accentColor", label: "Accent color", placeholder: "#0052cc" },
+  { key: "primaryColor", label: "Primary color", placeholder: "#2c271f" },
+  { key: "accentColor", label: "Accent color", placeholder: "#867865" },
   { key: "website", label: "Website", placeholder: "https://" },
   { key: "emailFromName", label: "Email from name" },
   { key: "emailReplyTo", label: "Reply-to" },

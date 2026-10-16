@@ -112,21 +112,7 @@ export function UserButton({
               style={{ borderRadius: "9999px", marginRight: "8px" }}
             />
           ) : (
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "28px",
-                height: "28px",
-                borderRadius: "9999px",
-                backgroundColor: "#0052cc",
-                color: "#ffffff",
-                fontSize: "12px",
-                fontWeight: 600,
-                marginRight: "8px",
-              }}
-            >
+            <span className="bg-kumo-brand text-kumo-inverse mr-2 inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold">
               {initials}
             </span>
           )}

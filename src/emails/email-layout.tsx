@@ -30,7 +30,7 @@ export interface EmailLayoutProps {
   fontFaceCss?: string;
 }
 
-const defaultBrandColor = "#0052cc";
+const defaultBrandColor = "#2c271f";
 
 export function EmailLayout({
   children,
@@ -48,7 +48,7 @@ export function EmailLayout({
     <Html>
       <Head>{fontFaceCss ? <style>{fontFaceCss}</style> : null}</Head>
       {previewText ? <Preview>{previewText}</Preview> : null}
-      <Body style={{ backgroundColor: "#f6f7fb", margin: 0, padding: 0 }}>
+      <Body style={{ backgroundColor: "#fbfaf9", margin: 0, padding: 0 }}>
         <Container
           style={{
             maxWidth: "600px",
@@ -96,7 +96,7 @@ export function EmailLayout({
 
           <Text
             style={{
-              color: "#6b7280",
+              color: "#867865",
               fontSize: "12px",
               textAlign: "center",
               marginTop: "24px",

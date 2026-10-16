@@ -1,6 +1,6 @@
 {
   "name": "@vortex-api/better-auth-ui",
-  "version": "0.2.23",
+  "version": "0.2.24",
   "description": "Kumo-based React components for Better Auth",
   "license": "MIT",
   "author": "Shlomo Kabareti <shlomo@vortex.nyc>",
@@ -8,6 +8,7 @@
   "sideEffects": false,
   "files": [
     "dist",
+    "theme.css",
     "LICENSE"
   ],
   "main": "./dist/index.js",
@@ -27,7 +28,8 @@
       "types": "./dist/native/index.d.ts",
       "import": "./dist/native/index.js",
       "default": "./dist/native/index.js"
-    }
+    },
+    "./theme.css": "./theme.css"
   },
   "scripts": {
     "build": "tsup",

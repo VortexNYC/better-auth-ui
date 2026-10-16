@@ -218,6 +218,7 @@ export {
 export {
   invitationAcceptHref,
   mergeOrganizationRegional,
+  organizationMetadataRecord,
   readOrganizationBrand,
   readOrganizationRegional,
   readOrganizationSecurity,
