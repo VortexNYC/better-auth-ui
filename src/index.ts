@@ -3,6 +3,10 @@ export type {
   AuthFormBaseProps,
   AuthOrganization,
   AuthUser,
+  SsoOidcConfigInput,
+  SsoProviderRecord,
+  SsoProviderType,
+  SsoSamlConfigInput,
 } from "./types";
 export { AuthProvider, useAuth, type AuthProviderProps } from "./auth-provider";
 export { AuthShell, type AuthShellProps } from "./auth-shell";
@@ -52,6 +56,16 @@ export {
   SsoSignInForm,
   type SsoSignInFormProps,
 } from "./forms/sso-sign-in-form";
+export {
+  SsoProviderForm,
+  SsoProviderSetupDetails,
+  type SsoProviderFormProps,
+  type SsoProviderSetupDetailsProps,
+} from "./forms/sso-provider-form";
+export {
+  SsoProviderList,
+  type SsoProviderListProps,
+} from "./forms/sso-provider-list";
 export {
   ForgotPasswordForm,
   type ForgotPasswordFormProps,
@@ -219,7 +233,17 @@ export {
   OrganizationRegionalForm,
   type OrganizationRegionalFormProps,
 } from "./forms/organization-regional-form";
-export { emailDomain, isNoSsoProviderError } from "./lib/sso";
+export {
+  emailDomain,
+  isNoSsoProviderError,
+  SSO_DOMAIN_VERIFICATION_DEFAULT_PREFIX,
+  ssoDomainVerificationHost,
+  ssoOidcRedirectUrl,
+  ssoProviderDomains,
+  ssoSamlAcsUrl,
+  ssoServerBaseUrl,
+  ssoSpMetadataUrl,
+} from "./lib/sso";
 export {
   invitationAcceptHref,
   mergeOrganizationRegional,

@@ -269,6 +269,82 @@ export interface AnyAuthClient {
       error: AuthResult["error"];
     }>;
   };
+
+  /**
+   * SSO provider administration (`@better-auth/sso` → `/sso/*`).
+   *
+   * `register` maps to `POST /sso/register`, `updateProvider` to
+   * `POST /sso/update-provider`, `deleteProvider` to
+   * `POST /sso/delete-provider`. `providers` and `getProvider` are the GET
+   * `pathMethods` (`/sso/providers`, `/sso/get-provider`). All endpoints are
+   * session-gated; providers linked to an organization require the caller
+   * to be an org owner/admin when the organization plugin is enabled.
+   */
+  sso?: {
+    register?(args: {
+      providerId: string;
+      issuer: string;
+      /** Comma-separated email domains routed to this provider. */
+      domain: string;
+      oidcConfig?: SsoOidcConfigInput;
+      samlConfig?: SsoSamlConfigInput;
+      organizationId?: string;
+      overrideUserInfo?: boolean;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<{
+      data?: SsoProviderRecord | null;
+      error: AuthResult["error"];
+    }>;
+    /** Partial update — only provided fields change. */
+    updateProvider?(args: {
+      providerId: string;
+      issuer?: string;
+      domain?: string;
+      oidcConfig?: SsoOidcConfigInput;
+      samlConfig?: SsoSamlConfigInput;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<{
+      data?: SsoProviderRecord | null;
+      error: AuthResult["error"];
+    }>;
+    deleteProvider?(args: {
+      providerId: string;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<AuthResult>;
+    /** `GET /sso/providers` — providers the session user can administer. */
+    providers?(args?: { fetchOptions?: AuthFetchOptions }): Promise<{
+      data?: { providers?: SsoProviderRecord[] } | null;
+      error: AuthResult["error"];
+    }>;
+    /** `GET /sso/get-provider?providerId=…` — one sanitized provider. */
+    getProvider?(args: {
+      query: { providerId: string };
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<{
+      data?: SsoProviderRecord | null;
+      error: AuthResult["error"];
+    }>;
+    /**
+     * `POST /sso/request-domain-verification` — mint (or re-read) the DNS
+     * TXT token for a provider. Only exists when the server enables
+     * `domainVerification`.
+     */
+    requestDomainVerification?(args: {
+      providerId: string;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<{
+      data?: { domainVerificationToken?: string } | null;
+      error: AuthResult["error"];
+    }>;
+    /**
+     * `POST /sso/verify-domain` — resolve the TXT record and mark the
+     * domain verified. Only exists when `domainVerification` is enabled.
+     */
+    verifyDomain?(args: {
+      providerId: string;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<AuthResult>;
+  };
 }
 
 export interface AuthAccount {
@@ -319,6 +395,99 @@ export interface AuthInvitation {
   inviterId?: string;
   expiresAt?: string | Date;
   createdAt?: string | Date;
+}
+
+/** SSO provider protocol — inferred server-side from the stored config. */
+export type SsoProviderType = "oidc" | "saml";
+
+/** OIDC config accepted by `sso.register` / `sso.updateProvider`. */
+export interface SsoOidcConfigInput {
+  clientId?: string;
+  clientSecret?: string;
+  discoveryEndpoint?: string;
+  authorizationEndpoint?: string;
+  tokenEndpoint?: string;
+  userInfoEndpoint?: string;
+  jwksEndpoint?: string;
+  tokenEndpointAuthentication?:
+    "client_secret_post" | "client_secret_basic" | "private_key_jwt";
+  scopes?: string[];
+  pkce?: boolean;
+  skipDiscovery?: boolean;
+}
+
+/** SAML config accepted by `sso.register` / `sso.updateProvider`. */
+export interface SsoSamlConfigInput {
+  /** IdP SSO URL. Required by the register schema. */
+  entryPoint?: string;
+  /** PEM certificate(s); omit when `idpMetadata.metadata` carries them. */
+  cert?: string | string[];
+  audience?: string;
+  callbackUrl?: string;
+  idpInitiatedCallbackUrl?: string;
+  idpMetadata?: {
+    /** Raw IdP metadata XML. */
+    metadata?: string;
+    /** Required when no metadata XML is provided. */
+    entityID?: string;
+    cert?: string | string[];
+  };
+  wantAssertionsSigned?: boolean;
+  authnRequestsSigned?: boolean;
+  identifierFormat?: string;
+  signatureAlgorithm?: string;
+  digestAlgorithm?: string;
+}
+
+/**
+ * An SSO provider as returned by `/sso/register`, `/sso/providers`,
+ * `/sso/get-provider`, and `/sso/update-provider`. Register responses add
+ * `redirectURI` and (with `domainVerification` enabled)
+ * `domainVerificationToken`; sanitized responses add `type` and
+ * `spMetadataUrl` and strip secrets (`oidcConfig.clientIdLastFour`).
+ */
+export interface SsoProviderRecord {
+  id?: string;
+  providerId: string;
+  type?: SsoProviderType;
+  issuer?: string;
+  /** Comma-separated email domains routed to this provider. */
+  domain?: string;
+  organizationId?: string | null;
+  userId?: string;
+  domainVerified?: boolean;
+  /** Present on register responses when domain verification is enabled. */
+  domainVerificationToken?: string;
+  /** OIDC callback URL — present on register responses. */
+  redirectURI?: string;
+  /** SP metadata URL — present on sanitized (list/get/update) responses. */
+  spMetadataUrl?: string;
+  oidcConfig?: {
+    issuer?: string;
+    clientId?: string;
+    clientIdLastFour?: string;
+    clientSecret?: string;
+    discoveryEndpoint?: string;
+    authorizationEndpoint?: string | null;
+    tokenEndpoint?: string | null;
+    userInfoEndpoint?: string | null;
+    jwksEndpoint?: string | null;
+    scopes?: string[] | null;
+    pkce?: boolean;
+    tokenEndpointAuthentication?: string | null;
+  } | null;
+  samlConfig?: {
+    issuer?: string;
+    entryPoint?: string;
+    cert?: string | string[];
+    callbackUrl?: string;
+    idpInitiatedCallbackUrl?: string;
+    audience?: string;
+    wantAssertionsSigned?: boolean;
+    authnRequestsSigned?: boolean;
+    identifierFormat?: string;
+    certificate?: unknown;
+  } | null;
 }
 
 export interface AuthPasskey {
