@@ -3,7 +3,11 @@
  */
 export interface AuthResult {
   data?: unknown;
-  error: { message?: string } | null;
+  error: {
+    message?: string;
+    status?: number;
+    statusText?: string;
+  } | null;
 }
 
 /** Per-call fetch overrides — captcha tokens ride `x-captcha-response` here. */
@@ -59,6 +63,30 @@ export interface AnyAuthClient {
     }): Promise<AuthResult>;
     passkey?(args?: {
       autoFill?: boolean;
+      fetchOptions?: AuthFetchOptions;
+    }): Promise<AuthResult>;
+    /**
+     * SAML/OIDC single sign-on (`@better-auth/sso` → `POST /sign-in/sso`).
+     *
+     * One of `email`, `domain`, `providerId`, or `organizationSlug` selects
+     * the provider; `callbackURL` is required by the endpoint. On success the
+     * response is `{ url, redirect: true }` and the client's default redirect
+     * plugin navigates to the IdP. A missing/unverified provider resolves as
+     * a 404 `"No provider found for the issuer"` — see `isNoSsoProviderError`.
+     */
+    sso?(args: {
+      email?: string;
+      domain?: string;
+      providerId?: string;
+      organizationSlug?: string;
+      callbackURL: string;
+      errorCallbackURL?: string;
+      newUserCallbackURL?: string;
+      scopes?: string[];
+      loginHint?: string;
+      additionalParams?: Record<string, string>;
+      requestSignUp?: boolean;
+      providerType?: "saml" | "oidc";
       fetchOptions?: AuthFetchOptions;
     }): Promise<AuthResult>;
   };

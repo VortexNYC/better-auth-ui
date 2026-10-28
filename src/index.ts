@@ -49,6 +49,10 @@ export {
   type MagicLinkVerifyProps,
 } from "./forms/magic-link-verify";
 export {
+  SsoSignInForm,
+  type SsoSignInFormProps,
+} from "./forms/sso-sign-in-form";
+export {
   ForgotPasswordForm,
   type ForgotPasswordFormProps,
 } from "./forms/forgot-password-form";
@@ -215,6 +219,7 @@ export {
   OrganizationRegionalForm,
   type OrganizationRegionalFormProps,
 } from "./forms/organization-regional-form";
+export { emailDomain, isNoSsoProviderError } from "./lib/sso";
 export {
   invitationAcceptHref,
   mergeOrganizationRegional,

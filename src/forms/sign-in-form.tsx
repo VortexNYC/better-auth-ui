@@ -52,6 +52,12 @@ export interface SignInFormProps extends AuthFormBaseProps {
   showPasskeySignIn?: boolean;
   passkeySignInLabel?: string;
   passkeySigningInLabel?: string;
+  /**
+   * Initial value for the email field — read once at mount. Useful when the
+   * form renders as a fallback after the email is already known (e.g. from
+   * `SsoSignInForm`'s `fallback` render prop).
+   */
+  initialEmail?: string;
   providers?: readonly AuthProviderOption[];
   onProviderSelect?: (providerId: string) => void | Promise<void>;
   dividerLabel?: string;
@@ -78,6 +84,7 @@ export function SignInForm({
   showPasskeySignIn = false,
   passkeySignInLabel = "Sign in with a passkey",
   passkeySigningInLabel = "Follow the device prompt...",
+  initialEmail,
   providers,
   onProviderSelect,
   dividerLabel = "or",
@@ -85,7 +92,7 @@ export function SignInForm({
 }: SignInFormProps) {
   const client = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasskeySigningIn, setIsPasskeySigningIn] = useState(false);
